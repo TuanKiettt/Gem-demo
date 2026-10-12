@@ -4,38 +4,58 @@ interface StepWelcomeProps {
 
 export function StepWelcome({ onNext }: StepWelcomeProps) {
   return (
-    <section className="relative flex h-full w-full flex-col items-center justify-center px-6 text-center overflow-hidden">
-      {/* Main Content */}
-      <div className="flex w-full max-w-4xl flex-col items-center justify-center gap-y-8 my-auto">
-        {/* Tagline và Logo 30 năm */}
-        <div className="flex w-full flex-col items-center gap-y-6">
+    <>
+      <div
+        className="
+          relative z-10 mx-auto grid h-full w-full max-w-125 justify-items-center px-[5%] py-[1.5dvh]
+        "
+      >
+        {/* 1. GEM logo */}
+        <div className="flex min-h-0 items-center justify-center w-full">
           <img
-            src="/tagline 1.png"
-            alt="Tagline"
-            className="w-auto max-w-112.5 h-auto object-contain"
+            src="/LogoGEM-02-1.png"
+            alt="GEM Center"
+            className=" absolute top-[4.5%] h-auto w-auto max-w-[45%] object-contain max-h-[10dvh]"
           />
         </div>
 
-        {/* Thời gian/Địa điểm */}
-        <div className="flex w-full justify-center mt-4">
+        {/* 2. Tagline: vùng giữa background */}
+        <div className="flex min-h-0 w-full items-center justify-center">
           <img
-            src="/TIME 1.png"
-            alt="time"
-            className="w-auto max-w-162.5 h-auto object-contain"
+            src="/Tgaline%201.png"
+            alt="Future Banquet Experience"
+            className=" absolute top-[45%] right-4 h-auto w-full object-contain max-h-[24dvh]"
           />
         </div>
 
-        {/* Nút bấm bắt đầu */}
-        <button
-          className="border rounded-full border-white/55 bg-[#F553A7] px-10 py-3 hover:bg-pink-400 active:bg-pink-400 active:scale-95 transition-transform cursor-pointer shadow-lg"
-          onClick={onNext}
-          type="button"
-        >
-          <h1 className="uppercase text-white font-bold text-lg sm:text-xl">
-            Bắt đầu tạo thiệp của bạn
-          </h1>
-        </button>
+        {/* 3. Partner logos */}
+        <div className="flex w-full items-center justify-center py-[1dvh]">
+          <img
+            src="/logo%202.png"
+            alt="GEM Center partners"
+            className=" absolute bottom-[15%] h-auto w-full object-contain max-h-[12dvh]"
+          />
+        </div>
+
+        {/* 4. Explore button */}
+        <div className="flex w-full items-center justify-center py-[1.5dvh]">
+          <button
+            type="button"
+            onClick={onNext}
+            className="w-[min(78%,280px)] shrink-0 rounded-full border border-[#FFF5EA]/70 px-4 py-3 font-bold transition-transform duration-200 active:scale-95 focus-visible:outline focus-visible:outline-[#DEBD99] absolute bottom-[5%]"
+            style={{
+              background:
+                "linear-gradient(180deg, #9B5931 0%, #DEBD99 35%, #DBB890 70%, #965B36 100%)",
+            }}
+          >
+            Khám Phá Trải Nghiệm
+          </button>
+        </div>
+
+        {/* 5. Bottom spacer
+            Background đã có logo Managed by ở phía dưới */}
+        <div aria-hidden="true" />
       </div>
-    </section>
+    </>
   );
 }

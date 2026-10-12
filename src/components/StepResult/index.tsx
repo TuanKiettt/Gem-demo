@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAppSelector } from "../../store/hooks";
 
 interface StepResultProps {
+  generatedMediaUrl: string | null;
   onReset: () => void;
 }
 
@@ -14,12 +14,9 @@ const getVideoMimeType = (url: string): string | null => {
   return null;
 };
 
-export function StepResult({ onReset }: StepResultProps) {
+export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
-  const generatedMediaUrl = useAppSelector(
-    (state) => state.workflow.generatedMediaUrl,
-  );
   const videoMimeType = generatedMediaUrl
     ? getVideoMimeType(generatedMediaUrl)
     : null;
@@ -42,7 +39,7 @@ export function StepResult({ onReset }: StepResultProps) {
         new URL(generatedMediaUrl).pathname.match(/\.(mp4|webm|ogg|mov)$/i)?.[0] ??
         ".mp4";
       link.href = downloadUrl;
-      link.download = `thiep-lipice${extension}`;
+      link.download = `thiep-gem${extension}`;
       document.body.appendChild(link);
       link.click();
       link.remove();

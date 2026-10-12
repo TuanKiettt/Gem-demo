@@ -1,9 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { RootState } from "./index";
 import { supabase } from "../lib/supabase";
 
 interface GenerateInvitationArgs {
   fullName: string;
+  gender: "NAM" | "NỮ";
+  experienceTime: string;
+  uploadedImageUrl: string | null;
 }
 
 interface ServiceRecord {
@@ -20,13 +21,6 @@ const IN_PROGRESS_STATUSES = new Set([
   "running",
   "in_progress",
   "in progress",
-]);
-const SUCCESS_STATUSES = new Set([
-  "done",
-  "completed",
-  "complete",
-  "success",
-  "succeeded",
 ]);
 const FAILURE_STATUSES = new Set([
   "error",
@@ -207,10 +201,6 @@ const waitForGeneratedImage = (
       }
 
       const status = record.status.trim().toLowerCase();
-      console.info("[AI invitation] Service status received", {
-        serviceId: id,
-        status: record.status,
-      });
 
       if (IN_PROGRESS_STATUSES.has(status)) {
         return;
@@ -229,13 +219,6 @@ const waitForGeneratedImage = (
         return;
       }
 
-      if (!SUCCESS_STATUSES.has(status)) {
-        console.warn("[AI invitation] Unrecognized service status; continuing to wait", {
-          serviceId: id,
-          status: record.status,
-        });
-        return;
-      }
 
       const mediaUrl = getMediaUrl(record.response);
       if (mediaUrl) {
@@ -251,11 +234,6 @@ const waitForGeneratedImage = (
     };
 
     channel.subscribe((status) => {
-      if (finished) return;
-      console.info("[AI invitation] Realtime status", {
-        serviceId: id,
-        status,
-      });
       if (status === "SUBSCRIBED" && !initialReadStarted) {
         initialReadStarted = true;
         void (async () => {
@@ -267,10 +245,6 @@ const waitForGeneratedImage = (
               );
             if (error) throw error;
 
-            console.info("[AI invitation] Initial service read completed", {
-              serviceId: id,
-              responseFields: isObject(service) ? Object.keys(service) : [],
-            });
             await handleServiceUpdate(service);
           } catch (error: unknown) {
             logAiError("reading initial service status", error, {
@@ -298,87 +272,58 @@ const waitForGeneratedImage = (
     });
   });
 
-export const generateInvitation = createAsyncThunk<
-  string,
-  GenerateInvitationArgs,
-  { state: RootState; rejectValue: string }
->(
-  "workflow/generateInvitation",
-  async ({ fullName }, { getState, rejectWithValue }) => {
-    let stage = "validating uploaded image";
-    const { uploadedImageUrl } = getState().workflow;
-    if (!uploadedImageUrl) {
-      const message = "Không tìm thấy URL ảnh đã tải lên.";
-      logAiError(stage, message);
-      return rejectWithValue(message);
+export async function generateInvitation({
+  fullName,
+  gender,
+  experienceTime,
+  uploadedImageUrl,
+}: GenerateInvitationArgs): Promise<string> {
+  let stage = "validating uploaded image";
+  if (!uploadedImageUrl) {
+    const error = new Error("Không tìm thấy URL ảnh đã tải lên.");
+    logAiError(stage, error);
+    throw error;
+  }
+
+  try {
+    stage = "creating AI service";
+    const { data: createdService, error: createError } =
+      await supabase.functions.invoke<unknown>("private/create_service", {
+        body: {
+          service: "hub",
+          realtime: true,
+          data: {
+            StyleName: "prompt",
+            Gender: gender === "NAM" ? "male" : "female",
+            FullName: fullName,
+            ExperienceTime: experienceTime,
+            BrandName: "invitation",
+            SourceImageUrl: uploadedImageUrl,
+            TargetImageUrl: "",
+            Prompt: GENERATION_PROMPT,
+          },
+        },
+      });
+    if (createError) {
+      throw new Error(`private/create_service: ${createError.message}`);
     }
 
-    try {
-      stage = "checking Supabase session";
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
-      if (!session?.access_token) {
-        throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-      }
-
-      stage = "creating AI service";
-      console.info("[AI invitation] Creating service", {
-        endpoint: "private/create_service",
-        service: "hub",
-        realtime: true,
-        hasUploadedImage: true,
-        hasFullName: Boolean(fullName),
-      });
-      const { data: createdService, error: createError } =
-        await supabase.functions.invoke<unknown>("private/create_service", {
-          body: {
-            service: "hub",
-            realtime: true,
-            data: {
-              StyleName: "prompt",
-              Gender: "female",
-              FullName: fullName,
-              BrandName: "invitation",
-              SourceImageUrl: uploadedImageUrl,
-              TargetImageUrl: "",
-              Prompt: GENERATION_PROMPT,
-            },
-          },
-        });
-      if (createError) {
-        throw new Error(`private/create_service: ${createError.message}`);
-      }
-
-      const serviceId = findServiceId(createdService);
-      if (!serviceId) {
-        throw new Error(
-          `create_service không trả về id service như mong đợi. Response fields: ${
-            isObject(createdService) ? Object.keys(createdService).join(", ") : typeof createdService
-          }`,
-        );
-      }
-
-      console.info("[AI invitation] Service created", {
-        serviceId,
-        responseFields: isObject(createdService)
-          ? Object.keys(createdService)
-          : [],
-      });
-
-      stage = "waiting for AI result";
-      const generatedMediaUrl = await waitForGeneratedImage(serviceId);
-      console.info("[AI invitation] Generated media received", { serviceId });
-      return generatedMediaUrl;
-    } catch (error) {
-      logAiError(stage, error);
-      return rejectWithValue(
-        error instanceof Error
-          ? error.message
-          : "Không thể tạo thiệp bằng AI. Vui lòng thử lại.",
+    const serviceId = findServiceId(createdService);
+    if (!serviceId) {
+      throw new Error(
+        `create_service không trả về id service như mong đợi. Response fields: ${
+          isObject(createdService) ? Object.keys(createdService).join(", ") : typeof createdService
+        }`,
       );
     }
-  },
-);
+
+    stage = "waiting for AI result";
+    const generatedMediaUrl = await waitForGeneratedImage(serviceId);
+    return generatedMediaUrl;
+  } catch (error) {
+    logAiError(stage, error);
+    throw error instanceof Error
+      ? error
+      : new Error("Không thể tạo thiệp bằng AI. Vui lòng thử lại.");
+  }
+}
