@@ -73,7 +73,7 @@ export function StepFormCard({
   return (
     <section>
       {/* Background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#07132f]/75 via-[#101c43]/70 to-[#102d78]/85" />
+      <div className="absolute inset-0 -z-10 bg-linear-to-b from-[#07132f]/75 via-[#101c43]/70 to-[#102d78]/85" />
 
       <div className="pointer-events-none absolute -bottom-32 left-1/2 -z-10 h-80 w-[150%] -translate-x-1/2 rounded-[50%] bg-blue-700/20 blur-3xl" />
 
@@ -116,7 +116,7 @@ export function StepFormCard({
       {/* Main content */}
       <div className="relative z-10 my-auto flex w-full max-w-md flex-col items-center py-6">
         {/* Portrait */}
-        <div className="relative h-40 w-[156px] shrink-0 overflow-hidden rounded-2xl border-2 border-[#d7a04c] bg-[#172344] shadow-[0_8px_30px_rgba(0,0,0,0.3)] sm:h-44 sm:w-[172px]">
+        <div className="relative h-40 w-39 shrink-0 overflow-hidden rounded-2xl border-2 border-[#d7a04c] bg-[#172344] shadow-[0_8px_30px_rgba(0,0,0,0.3)] sm:h-44 sm:w-43">
           {preview ? (
             <img
               src={preview}
@@ -216,7 +216,7 @@ export function StepFormCard({
             !uploadedImageUrl ||
             generationLoading
           }
-          className="mx-auto flex min-h-11 w-fit max-w-full items-center justify-center gap-1.5 rounded-full border border-[#fff0ce] bg-gradient-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#11182b] shadow-[0_4px_18px_rgba(0,0,0,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 sm:px-8"
+          className="mx-auto flex min-h-11 w-fit max-w-full items-center justify-center gap-1.5 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#11182b] shadow-[0_4px_18px_rgba(0,0,0,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 sm:px-8"
         >
           {generationLoading ? (
             "Đang tạo thiệp..."

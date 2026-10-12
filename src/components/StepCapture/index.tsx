@@ -93,7 +93,7 @@ export function StepCapture({
       {/* Transparent blue overlay */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#0C1636]/40 via-[#0C1636]/25 to-[#23409C]/35"
+        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-[#0C1636]/40 via-[#0C1636]/25 to-[#23409C]/35"
       />
 
       {/* Main content */}
@@ -158,7 +158,7 @@ export function StepCapture({
         />
 
         {/* Upload area */}
-        <div className="mt-7 flex min-h-[250px] flex-1 flex-col items-center justify-center rounded-[24px] border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-8">
+        <div className="mt-7 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-8">
           <button
             type="button"
             onClick={() => galleryRef.current?.click()}
@@ -187,7 +187,7 @@ export function StepCapture({
             )}
           </button>
 
-          <p className="mt-4 max-w-[250px] text-center text-xs leading-5 text-[#B9C2D5]">
+          <p className="mt-4 max-w-62.5 text-center text-xs leading-5 text-[#B9C2D5]">
             Ưu tiên ảnh rõ mặt, đủ sáng và nhìn thẳng vào camera.
           </p>
 

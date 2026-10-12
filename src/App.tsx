@@ -9,8 +9,9 @@ import { StepCapture } from "./components/StepCapture";
 import { StepFormCard } from "./components/StepFormCard";
 import { StepResult } from "./components/StepResult";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
+import LoadingPage from "./components/LoadingPage.tsx";
 
-type WorkflowStep = 0 | 1 | 2 | 3 | 4;
+type WorkflowStep = 0 | 1 | 2 | 3 | 4 | 5;
 
 const BTN_CLASSES =
   "rounded-full px-10 py-4 text-xl font-semibold disabled:opacity-30 transition focus-visible:outline-4 focus-visible:outline-offset-4";
@@ -130,6 +131,10 @@ function App() {
         )}
 
         {step === 4 && (
+          <LoadingPage />
+        )}
+
+        {step === 5 && (
           <StepResult generatedMediaUrl={generatedMediaUrl} onReset={reset} />
         )}
       </div>
