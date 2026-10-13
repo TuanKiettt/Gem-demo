@@ -167,7 +167,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
     >
       {/* Background artwork */}
       <img
-        src="/02-1.png"
+        src={`${import.meta.env.BASE_URL}02-1.png`}
         alt=""
         aria-hidden="true"
         className="

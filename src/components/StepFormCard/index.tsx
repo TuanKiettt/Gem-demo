@@ -1,6 +1,9 @@
 
 import { useState } from "react";
-import { generateInvitation } from "../../api/invitation";
+import {
+  generateInvitation,
+  type InvitationGenerationProgress,
+} from "../../api/invitation";
 import {
   readRegistrationData,
   type RegistrationData,
@@ -12,6 +15,9 @@ interface StepFormCardProps {
   preview: string | null;
   uploadedImageUrl: string | null;
   onGenerated: (url: string) => void;
+  onGenerationStart: () => void;
+  onGenerationProgress: (progress: InvitationGenerationProgress) => void;
+  onGenerationError: () => void;
 }
 
 export function StepFormCard({
@@ -20,6 +26,9 @@ export function StepFormCard({
   preview,
   uploadedImageUrl,
   onGenerated,
+  onGenerationStart,
+  onGenerationProgress,
+  onGenerationError,
 }: StepFormCardProps) {
   const [generationLoading, setGenerationLoading] = useState(false);
   const [generationError, setGenerationError] = useState("");
@@ -46,19 +55,24 @@ export function StepFormCard({
 
     setGenerationLoading(true);
     setGenerationError("");
+    onGenerationStart();
 
     try {
-      const generatedUrl = await generateInvitation({
-        fullName: profile.fullName,
-        gender: profile.gender,
-        experienceTime: profile.experienceTime,
-        uploadedImageUrl,
-      });
+      const generatedUrl = await generateInvitation(
+        {
+          fullName: profile.fullName,
+          gender: profile.gender,
+          experienceTime: profile.experienceTime,
+          uploadedImageUrl,
+        },
+        onGenerationProgress,
+      );
 
       onGenerated(generatedUrl);
       onNext();
     } catch (error) {
       console.error("Không thể tạo thiệp:", error);
+      onGenerationError();
 
       setGenerationError(
         error instanceof Error

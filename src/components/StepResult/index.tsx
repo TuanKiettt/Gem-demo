@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Download, LoaderCircle, RotateCcw } from "lucide-react";
 
 interface StepResultProps {
   generatedMediaUrl: string | null;
@@ -89,24 +90,32 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
           {downloadError}
         </p>
       )}
-      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-3">
+      <div className="absolute right-4 top-4 z-10 flex gap-2 sm:right-6 sm:top-6">
         {videoMimeType && (
           <button
             type="button"
             onClick={handleDownload}
             disabled={downloading}
-            className="rounded-full bg-white/90 px-6 py-3 text-base font-bold text-[#F553A7] shadow-lg backdrop-blur transition hover:bg-white disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            aria-label={downloading ? "Đang tải video" : "Tải video"}
+            title={downloading ? "Đang tải video" : "Tải video"}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-black/45 text-white shadow-lg backdrop-blur-md transition hover:bg-black/70 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
-            {downloading ? "Đang tải..." : "Tải video"}
+            {downloading ? (
+              <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" />
+            ) : (
+              <Download className="h-5 w-5" aria-hidden="true" />
+            )}
           </button>
         )}
         <button
           type="button"
           onClick={onReset}
           disabled={downloading}
-          className="rounded-full bg-[#F553A7] px-8 py-3 text-base font-bold text-white shadow-lg backdrop-blur transition hover:bg-black/85 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          aria-label="Chơi lại"
+          title="Chơi lại"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-black/45 text-white shadow-lg backdrop-blur-md transition hover:bg-black/70 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
-          Chơi lại
+          <RotateCcw className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
     </section>

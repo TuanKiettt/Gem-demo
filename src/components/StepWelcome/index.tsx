@@ -13,7 +13,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         {/* 1. GEM logo */}
         <div className="flex min-h-0 items-center justify-center w-full">
           <img
-            src="/LogoGEM-02-1.png"
+            src={`${import.meta.env.BASE_URL}LogoGEM-02-1.png`}
             alt="GEM Center"
             className=" absolute top-[4.5%] h-auto w-auto max-w-[45%] object-contain max-h-[10dvh]"
           />
@@ -22,7 +22,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         {/* 2. Tagline: vùng giữa background */}
         <div className="flex min-h-0 w-full items-center justify-center">
           <img
-            src="/Tgaline%201.png"
+            src={`${import.meta.env.BASE_URL}Tgaline%201.png`}
             alt="Future Banquet Experience"
             className=" absolute top-[45%] right-4 h-auto w-full object-contain max-h-[24dvh]"
           />
@@ -31,7 +31,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         {/* 3. Partner logos */}
         <div className="flex w-full items-center justify-center py-[1dvh]">
           <img
-            src="/logo%202.png"
+            src={`${import.meta.env.BASE_URL}logo%202.png`}
             alt="GEM Center partners"
             className=" absolute bottom-[15%] h-auto w-full object-contain max-h-[12dvh]"
           />

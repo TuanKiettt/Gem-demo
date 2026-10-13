@@ -10,8 +10,10 @@ import { StepFormCard } from "./components/StepFormCard";
 import { StepResult } from "./components/StepResult";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import LoadingPage from "./components/LoadingPage.tsx";
+import type { InvitationGenerationProgress } from "./api/invitation";
 
-type WorkflowStep = 0 | 1 | 2 | 3 | 4 | 5;
+type WorkflowStep = 0 | 1 | 2 | 3 | 5;
+type PhotoSource = "upload" | "camera";
 
 const BTN_CLASSES =
   "rounded-full px-10 py-4 text-xl font-semibold disabled:opacity-30 transition focus-visible:outline-4 focus-visible:outline-offset-4";
@@ -23,9 +25,16 @@ function App() {
   const [step, setStep] = useState<WorkflowStep>(0);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [photoSource, setPhotoSource] = useState<PhotoSource | null>(null);
   const [generatedMediaUrl, setGeneratedMediaUrl] = useState<string | null>(
     null,
   );
+  const [generationActive, setGenerationActive] = useState(false);
+  const [generationProgress, setGenerationProgress] =
+    useState<InvitationGenerationProgress>({
+      progress: null,
+      message: "Đang gửi yêu cầu tạo thiệp đến AI...",
+    });
   const handleSessionChange = useCallback((nextSession: Session | null) => {
     if (nextSession) {
       return;
@@ -34,7 +43,9 @@ function App() {
     setStep(0);
     setPreview(null);
     setUploadedImageUrl(null);
+    setPhotoSource(null);
     setGeneratedMediaUrl(null);
+    setGenerationActive(false);
   }, []);
   const authStatus = useSupabaseSession(handleSessionChange);
 
@@ -85,6 +96,7 @@ function App() {
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     setPreview(null);
     setUploadedImageUrl(null);
+    setPhotoSource(null);
     setGeneratedMediaUrl(null);
     Cookies.remove("uploadedAvatar", { path: "" });
     Cookies.remove("uploadedAvatar", { path: "/" });
@@ -94,7 +106,7 @@ function App() {
   };
 
   return (
-    <MainLayout stepNum={step}>
+    <MainLayout>
       <div ref={wrapRef} className="w-full h-full flex flex-col items-center justify-center">
         {step === 0 && (
           <StepWelcome onNext={() => animateTransition(authStatus === "authenticated" ? 2 : 1)} />
@@ -111,9 +123,11 @@ function App() {
           <StepCapture
             preview={preview}
             uploadedImageUrl={uploadedImageUrl}
-            onImageUploaded={(nextPreview, nextImageUrl) => {
+            photoSource={photoSource}
+            onImageUploaded={(nextPreview, nextImageUrl, nextPhotoSource) => {
               setPreview(nextPreview);
               setUploadedImageUrl(nextImageUrl);
+              setPhotoSource(nextPhotoSource);
             }}
             onNext={() => animateTransition(3)}
             onBack={() => animateTransition(1)}
@@ -124,20 +138,34 @@ function App() {
           <StepFormCard
             preview={preview}
             uploadedImageUrl={uploadedImageUrl}
-            onGenerated={setGeneratedMediaUrl}
+            onGenerated={(url) => {
+              setGeneratedMediaUrl(url);
+              setGenerationActive(false);
+            }}
+            onGenerationStart={() => {
+              setGenerationProgress({
+                progress: null,
+                message: "Đang gửi yêu cầu tạo thiệp đến AI...",
+              });
+              setGenerationActive(true);
+            }}
+            onGenerationProgress={setGenerationProgress}
+            onGenerationError={() => setGenerationActive(false)}
             onBack={() => animateTransition(2)}
-            onNext={() => animateTransition(4)}
+            onNext={() => animateTransition(5)}
           />
-        )}
-
-        {step === 4 && (
-          <LoadingPage />
         )}
 
         {step === 5 && (
           <StepResult generatedMediaUrl={generatedMediaUrl} onReset={reset} />
         )}
       </div>
+      {generationActive && (
+        <LoadingPage
+          progress={generationProgress.progress}
+          subtitle={generationProgress.message}
+        />
+      )}
     </MainLayout>
   );
 }
