@@ -163,7 +163,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
       className="
         relative isolate min-h-dvh w-full overflow-x-hidden
         bg-linear-to-b from-[#0C1636]/75 to-[#23409C]/75
-        text-white
+        text-white px-5
       "
     >
       {/* Form container */}

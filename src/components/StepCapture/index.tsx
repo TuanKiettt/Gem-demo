@@ -3,13 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Cropper, { type ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { uploadImage } from "../../api/uploadImage";
-import { ArrowLeftCircle, ArrowUp, FocusIcon } from "lucide-react";
+import { ArrowUp, Check, FocusIcon, X } from "lucide-react";
 
 type PhotoSource = "upload" | "camera";
 
 interface StepCaptureProps {
   onNext: () => void;
-  onBack?: () => void;
   preview: string | null;
   uploadedImageUrl: string | null;
   photoSource: PhotoSource | null;
@@ -22,7 +21,6 @@ interface StepCaptureProps {
 
 export function StepCapture({
   onNext,
-  onBack,
   preview,
   uploadedImageUrl,
   photoSource,
@@ -236,6 +234,8 @@ export function StepCapture({
       return;
     }
 
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageBlob = await new Promise<Blob | null>((resolve) =>
       canvas.toBlob(resolve, "image/jpeg", 0.92),
@@ -288,18 +288,11 @@ export function StepCapture({
       />
 
       {/* Main content */}
-      <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-6 pt-5 sm:px-7">
-        <div className="flex h-10 shrink-0 items-center">
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Quay lại"
-            className="flex h-9 w-9 items-center justify-center text-[#E9B95F] transition hover:bg-white/10"
-          >
-            <ArrowLeftCircle/>
-          </button>
-        </div>
-        {/* Back button */}
+      <section
+        className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-6 pt-5 sm:px-7 ${
+          cropSource ? "hidden" : ""
+        }`}
+      >
 
         {/* Heading */}
         <header className="shrink-0 text-center sm:mt-7">
@@ -326,54 +319,8 @@ export function StepCapture({
 
         {/* Upload area */}
         <div className="mt-3 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-3">
-          <div className="relative aspect-square w-[min(65vw,210px)] shrink-0 overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
-            {cropSource ? (
-              <Cropper
-                ref={cropperRef}
-                src={cropSource}
-                style={{ height: "100%", width: "100%" }}
-                className="capture-cropper"
-                aspectRatio={1}
-                viewMode={0}
-                dragMode="move"
-                cropBoxMovable={false}
-                cropBoxResizable={false}
-                guides={false}
-                center={false}
-                highlight={false}
-                background={false}
-                responsive
-                checkOrientation
-                ready={(event) => {
-                  const cropper = event.currentTarget.cropper;
-                  const container = cropper.getContainerData();
-                  const canvas = cropper.getCanvasData();
-                  const scale = Math.max(
-                    container.width / canvas.width,
-                    container.height / canvas.height,
-                  );
-                  const width = canvas.width * scale;
-                  const height = canvas.height * scale;
-
-                  cropper.setCropBoxData({
-                    left: 0,
-                    top: 0,
-                    width: container.width,
-                    height: container.height,
-                  });
-                  cropper.setCanvasData({
-                    left: (container.width - width) / 2,
-                    top: (container.height - height) / 2,
-                    width,
-                    height,
-                  });
-                }}
-                zoomOnWheel
-                zoomOnTouch
-                wheelZoomRatio={0.1}
-                toggleDragModeOnDblclick={false}
-              />
-            ) : cameraOpen ? (
+          <div className="relative aspect-square w-[min(75vw,250px)] shrink-0 overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
+            {cameraOpen ? (
               <>
                 <video
                   ref={videoRef}
@@ -381,7 +328,7 @@ export function StepCapture({
                   muted
                   playsInline
                   aria-label="Hình ảnh camera trực tiếp"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full scale-x-[-1] object-cover"
                 />
                 {countdown !== null && (
                   <div
@@ -397,27 +344,6 @@ export function StepCapture({
                     </span>
                   </div>
                 )}
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-linear-to-t from-black/75 to-transparent pb-3 pt-8">
-                  <button
-                    type="button"
-                    onClick={startCaptureCountdown}
-                    disabled={countdown !== null}
-                    aria-label="Chụp ảnh"
-                    title="Chụp ảnh"
-                    className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-white/25 shadow-lg transition hover:bg-white/40 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    <span className="h-8 w-8 rounded-full bg-white" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={stopCamera}
-                  aria-label="Đóng camera"
-                  title="Đóng camera"
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-xl leading-none text-white shadow transition hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
               </>
             ) : (
               <button
@@ -443,7 +369,7 @@ export function StepCapture({
           </div>
 
           {cropSource ? (
-            <div className="mt-4 flex flex-col items-center gap-3">
+            <div className="mt-4 flex flex-col items-center gap-10">
               <p className="text-center text-xs leading-5 text-[#B9C2D5]">
                 Kéo ảnh để đổi vị trí. Cuộn chuột để thu phóng trên máy tính
                 hoặc chụm hai ngón tay trên điện thoại.
@@ -475,14 +401,6 @@ export function StepCapture({
                 Ưu tiên ảnh rõ mặt, đủ sáng và nhìn thẳng vào camera.
               </p>
 
-              <p className="mt-5 text-center text-xs font-medium tracking-wide text-[#C0C9DD]">
-                {cameraOpen
-                  ? "CAMERA ĐANG BẬT"
-                  : photo
-                    ? "ĐÃ CÓ ẢNH"
-                    : "CHƯA CÓ ẢNH"}
-              </p>
-
               {photo && !cameraOpen && (
                 <button
                   type="button"
@@ -505,25 +423,47 @@ export function StepCapture({
         {/* Upload / Camera buttons */}
         {!cropSource && (
           <div className="mt-5 grid shrink-0 grid-cols-2 gap-3 sm:gap-4">
-            <button
-              type="button"
-              onClick={() => galleryRef.current?.click()}
-              disabled={photoSource === "camera" || cameraOpen}
-              className={goldButton}
-            >
-              <span aria-hidden="true"><ArrowUp className="w-4 h-4"/></span>
-              Tải ảnh lên
-            </button>
+            {cameraOpen ? (
+              <>
+                <button
+                  type="button"
+                  onClick={stopCamera}
+                  className={goldButton}
+                >
+                  QUAY LẠI
+                </button>
+                <button
+                  type="button"
+                  onClick={startCaptureCountdown}
+                  disabled={countdown !== null}
+                  className={goldButton}
+                >
+                  CHỤP ẢNH
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => galleryRef.current?.click()}
+                  disabled={photoSource === "camera"}
+                  className={goldButton}
+                >
+                  <span aria-hidden="true"><ArrowUp className="w-4 h-4"/></span>
+                  {photo ? "Tải ảnh khác" : "Tải ảnh lên"}
+                </button>
 
-            <button
-              type="button"
-              onClick={() => void openCamera()}
-              disabled={photoSource === "upload" || cameraOpen}
-              className={goldButton}
-            >
-              <span aria-hidden="true"><FocusIcon className="w-4 h-4"/></span>
-              Chụp ảnh
-            </button>
+                <button
+                  type="button"
+                  onClick={() => void openCamera()}
+                  disabled={photoSource === "upload"}
+                  className={goldButton}
+                >
+                  <span aria-hidden="true"><FocusIcon className="w-4 h-4"/></span>
+                  {photo ? "Chụp lại" : "Chụp ảnh"}
+                </button>
+              </>
+            )}
           </div>
         )}
 
@@ -550,7 +490,93 @@ export function StepCapture({
           </button>
         </div>
       </section>
+      {cropSource && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4">
+          <div className="flex h-full max-h-[900px] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#D7A15B]/70 bg-[#101A35] shadow-2xl">
+            <header className="relative flex h-16 shrink-0 items-center justify-center border-b border-white/10 px-16">
+              <button
+                type="button"
+                onClick={cancelCrop}
+                aria-label="Đóng cắt ảnh"
+                className="absolute left-4 flex h-11 w-11 items-center justify-center rounded-full bg-red-500 text-white shadow transition hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <X aria-hidden="true" className="h-6 w-6" />
+              </button>
+              <h2 className="text-lg font-bold tracking-wide text-[#FFF7ED]">
+                Cắt ảnh
+              </h2>
+            </header>
 
+            <div className="min-h-0 flex-1 bg-[#858585]">
+              <Cropper
+                ref={cropperRef}
+                src={cropSource}
+                style={{ height: "100%", width: "100%" }}
+                className="capture-cropper"
+                aspectRatio={1}
+                viewMode={1}
+                dragMode="move"
+                cropBoxMovable={false}
+                cropBoxResizable={false}
+                guides
+                center
+                highlight={false}
+                background={false}
+                responsive
+                checkOrientation
+                ready={(event) => {
+                  const cropper = event.currentTarget.cropper;
+                  const container = cropper.getContainerData();
+                  const canvas = cropper.getCanvasData();
+                  const size = Math.min(
+                    container.width * 0.76,
+                    container.height * 0.76,
+                  );
+
+                  cropper.setCropBoxData({
+                    left: (container.width - size) / 2,
+                    top: (container.height - size) / 2,
+                    width: size,
+                    height: size,
+                  });
+
+                  const scale = Math.max(
+                    size / canvas.width,
+                    size / canvas.height,
+                  );
+                  const scaledWidth = canvas.width * scale;
+                  const scaledHeight = canvas.height * scale;
+                  cropper.setCanvasData({
+                    left: (container.width - scaledWidth) / 2,
+                    top: (container.height - scaledHeight) / 2,
+                    width: scaledWidth,
+                    height: scaledHeight,
+                  });
+                }}
+                zoomOnWheel
+                zoomOnTouch
+                wheelZoomRatio={0.1}
+                toggleDragModeOnDblclick={false}
+              />
+            </div>
+
+            <footer className="shrink-0 border-t border-white/10 px-5 py-4 sm:px-8">
+              <button
+                type="button"
+                onClick={() => void applyCrop()}
+                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#FFF5EA]/80 px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
+                }}
+              >
+                <Check aria-hidden="true" className="h-5 w-5" />
+                CẮT ẢNH
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -14,9 +14,20 @@
   }
 }
 
-.capture-cropper .cropper-view-box,
-.capture-cropper .cropper-face {
-  border-radius: 50%;
+.capture-cropper .cropper-modal {
+  background-color: #000;
+  opacity: 0.48;
+}
+
+.capture-cropper .cropper-view-box {
+  outline: 1px solid rgb(255 255 255 / 70%);
+  outline-color: rgb(255 255 255 / 70%);
+}
+
+.capture-cropper .cropper-dashed {
+  border-color: rgb(255 255 255 / 70%);
+  border-style: dashed;
+  opacity: 0.55;
 }
 
 @keyframes capture-countdown {
