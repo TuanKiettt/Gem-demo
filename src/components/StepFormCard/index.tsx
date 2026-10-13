@@ -8,6 +8,7 @@ import {
   readRegistrationData,
   type RegistrationData,
 } from "../../lib/registration";
+import { ArrowLeftCircle } from "lucide-react";
 
 interface StepFormCardProps {
   onBack: () => void;
@@ -98,22 +99,9 @@ export function StepFormCard({
           onClick={onBack}
           disabled={generationLoading}
           aria-label="Quay lại"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e9b84f] text-[#f5c34f] transition hover:bg-[#e9b84f]/15 disabled:opacity-50"
+          className="flex h-9 w-9 items-center justify-center  text-[#f5c34f] transition hover:bg-[#e9b84f]/15 disabled:opacity-50"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            className="h-6 w-6"
-            aria-hidden="true"
-          >
-            <path
-              d="M19 12H5m0 0 7-7m-7 7 7 7"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ArrowLeftCircle/>
         </button>
       </div>
 
@@ -230,15 +218,14 @@ export function StepFormCard({
             !uploadedImageUrl ||
             generationLoading
           }
-          className="mx-auto flex min-h-11 w-fit max-w-full items-center justify-center gap-1.5 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#11182b] shadow-[0_4px_18px_rgba(0,0,0,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 sm:px-8"
+          className="mx-auto flex min-h-11 w-fit max-w-full items-center justify-center gap-1.5 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-6 py-3 text-sm font-extrabold uppercase "
         >
           {generationLoading ? (
             "Đang tạo thiệp..."
           ) : (
-            <>
-              Xác nhận &amp; tạo thiệp
-              <span aria-hidden="true">→</span>
-            </>
+            <div>
+              Xác nhận tạo thiệp
+            </div>
           )}
         </button>
       </div>

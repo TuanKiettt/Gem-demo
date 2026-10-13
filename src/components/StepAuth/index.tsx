@@ -1,12 +1,16 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "../../lib/supabase";
 import {
-  isValidPhone,
-  normalizePhone,
   saveRegistrationData,
-  type Gender,
   type RegistrationData,
 } from "../../lib/registration";
+import {
+  registerSchema,
+  type RegisterFormData,
+  type RegisterFormInput,
+} from "../../schema/authSchema";
 
 interface SignupAvailability {
   email_taken: boolean;
@@ -27,34 +31,33 @@ interface StepAuthProps {
 }
 
 export function StepAuth({ onNext }: StepAuthProps) {
-  const [gender, setGender] = useState<Gender | "">("");
-  const [time, setTime] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormInput, unknown, RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: "",
+      phone: "",
+      email: "",
+    },
+  });
+  const gender = useWatch({ control, name: "gender" });
+  const time = useWatch({ control, name: "experienceTime" });
+  const [registrationError, setRegistrationError] = useState("");
 
-  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
+  const handleRegister = async ({
+    fullName,
+    phone,
+    email,
+    gender,
+    experienceTime,
+  }: RegisterFormData) => {
+    setRegistrationError("");
 
-    const formData = new FormData(event.currentTarget);
-    const fullName = String(formData.get("fullName") ?? "").trim();
-    const phone = normalizePhone(String(formData.get("phone") ?? ""));
-    const email = String(formData.get("email") ?? "").trim().toLowerCase();
-
-    if (!gender || !time) {
-      setError("Vui lòng chọn giới tính và khung giờ trải nghiệm.");
-      return;
-    }
-    if (!fullName) {
-      setError("Vui lòng nhập họ và tên.");
-      return;
-    }
-    if (!isValidPhone(phone)) {
-      setError("Số điện thoại không hợp lệ (ví dụ: 0912345678).");
-      return;
-    }
-
-    setLoading(true);
     try {
       const { data: availabilityData, error: availabilityError } = await supabase
         .rpc("check_signup_available", { p_email: email, p_phone: phone })
@@ -71,7 +74,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
         taken.push("Số điện thoại đã được sử dụng");
       }
       if (taken.length) {
-        setError(`${taken.join(". ")}. Vui lòng kiểm tra lại.`);
+        setRegistrationError(`${taken.join(". ")}. Vui lòng kiểm tra lại.`);
         return;
       }
 
@@ -83,7 +86,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
         phone,
         email,
         gender,
-        experienceTime: time,
+        experienceTime,
       };
 
       const { data, error: signUpError } = await supabase.auth.signUp({
@@ -94,7 +97,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
             full_name: fullName,
             phone,
             gender,
-            experience_time: time,
+            experience_time: experienceTime,
           },
         },
       });
@@ -126,13 +129,11 @@ export function StepAuth({ onNext }: StepAuthProps) {
       onNext();
     } catch (registrationError) {
       console.error("Không thể đăng ký người tham dự:", registrationError);
-      setError(
+      setRegistrationError(
         registrationError instanceof Error
           ? registrationError.message
           : "Không thể đăng ký. Vui lòng thử lại.",
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -161,36 +162,15 @@ export function StepAuth({ onNext }: StepAuthProps) {
     <main
       className="
         relative isolate min-h-dvh w-full overflow-x-hidden
-        bg-linear-to-b from-[#0C1636] to-[#23409C]
+        bg-linear-to-b from-[#0C1636]/75 to-[#23409C]/75
         text-white
       "
     >
-      {/* Background artwork */}
-      <img
-        src={`${import.meta.env.BASE_URL}02-1.png`}
-        alt=""
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute inset-0 -z-10
-          h-full w-full object-cover object-center opacity-20
-        "
-      />
-
-      {/* Blue overlay */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute inset-0 -z-10
-          bg-linear-to-b from-[#0C1636]/35 via-[#12234F]/25
-          to-[#23409C]/35
-        "
-      />
-
       {/* Form container */}
       <section
         className="
           relative mx-auto flex min-h-dvh w-full max-w-lg
-          flex-col justify-center px-6
+          flex-col justify-center px-6F
           py-8
           [@media(max-height:720px)]:py-5
         "
@@ -214,7 +194,8 @@ export function StepAuth({ onNext }: StepAuthProps) {
         {/* Form */}
         <form
           className="flex flex-col gap-4 [@media(max-height:720px)]:gap-3"
-          onSubmit={handleRegister}
+          onSubmit={handleSubmit(handleRegister)}
+          noValidate
         >
           {/* Full name */}
           <div>
@@ -223,13 +204,18 @@ export function StepAuth({ onNext }: StepAuthProps) {
             </label>
             <input
               id="fullName"
-              name="fullName"
               type="text"
               autoComplete="name"
               placeholder="Nhập họ và tên"
               className={inputClass}
-              required
+              aria-invalid={Boolean(errors.fullName)}
+              {...register("fullName")}
             />
+            {errors.fullName && (
+              <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
+                {errors.fullName.message}
+              </p>
+            )}
           </div>
 
           {/* Phone */}
@@ -239,14 +225,19 @@ export function StepAuth({ onNext }: StepAuthProps) {
             </label>
             <input
               id="phone"
-              name="phone"
               type="tel"
               autoComplete="tel"
               inputMode="tel"
               placeholder="Nhập số điện thoại"
               className={inputClass}
-              required
+              aria-invalid={Boolean(errors.phone)}
+              {...register("phone")}
             />
+            {errors.phone && (
+              <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
+                {errors.phone.message}
+              </p>
+            )}
           </div>
 
           {/* Email */}
@@ -256,13 +247,18 @@ export function StepAuth({ onNext }: StepAuthProps) {
             </label>
             <input
               id="email"
-              name="email"
               type="email"
               autoComplete="email"
               placeholder="name@example.com"
               className={inputClass}
-              required
+              aria-invalid={Boolean(errors.email)}
+              {...register("email")}
             />
+            {errors.email && (
+              <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Gender */}
@@ -275,13 +271,25 @@ export function StepAuth({ onNext }: StepAuthProps) {
                   key={item}
                   type="button"
                   aria-pressed={gender === item}
-                  onClick={() => setGender(item)}
+                  aria-invalid={Boolean(errors.gender)}
+                  onClick={() =>
+                    setValue("gender", item, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    })
+                  }
                   className={`${optionClass(gender === item)} w-22.25`}
                 >
                   {item}
                 </button>
               ))}
             </div>
+            {errors.gender && (
+              <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
+                {errors.gender.message}
+              </p>
+            )}
           </fieldset>
 
           {/* Experience time */}
@@ -291,13 +299,20 @@ export function StepAuth({ onNext }: StepAuthProps) {
             </legend>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {["09:00 - 11:30", "11:30 - 13:30", "13:30 - 16:00"].map(
+              {(["09:00 - 11:30", "11:30 - 13:30", "13:30 - 16:00"] as const).map(
                 (item) => (
                   <button
                     key={item}
                     type="button"
                     aria-pressed={time === item}
-                    onClick={() => setTime(item)}
+                    aria-invalid={Boolean(errors.experienceTime)}
+                    onClick={() =>
+                      setValue("experienceTime", item, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      })
+                    }
                     className={`
                       whitespace-nowrap rounded-xl border
                       px-1 py-3 text-[11px] transition
@@ -314,22 +329,27 @@ export function StepAuth({ onNext }: StepAuthProps) {
                 ),
               )}
             </div>
+            {errors.experienceTime && (
+              <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
+                {errors.experienceTime.message}
+              </p>
+            )}
           </fieldset>
 
           {/* Validation message */}
-          {error && (
+          {registrationError && (
             <p
               role="alert"
               className="text-left text-xs leading-4 text-[#E9A6A6]"
             >
-              {error}
+              {registrationError}
             </p>
           )}
 
           {/* Continue button */}
           <button
             type="submit"
-            disabled={!gender || !time || loading}
+            disabled={!gender || !time || isSubmitting}
             className={`
               mx-auto mt-0 w-[min(100%,280px)]
               rounded-full border border-[#FFF5EA]/80
@@ -344,7 +364,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
                 "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
             }}
           >
-            {loading ? "ĐANG ĐĂNG KÝ..." : "ĐĂNG KÝ"}
+            {isSubmitting ? "ĐANG ĐĂNG KÝ..." : "ĐĂNG KÝ"}
           </button>
         </form>
       </section>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Cropper, { type ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { uploadImage } from "../../api/uploadImage";
+import { ArrowLeftCircle, ArrowUp, FocusIcon } from "lucide-react";
 
 type PhotoSource = "upload" | "camera";
 
@@ -280,7 +281,6 @@ export function StepCapture({
 
   return (
     <main>
-      {/* Background */}
       {/* Transparent blue overlay */}
       <div
         aria-hidden="true"
@@ -294,27 +294,15 @@ export function StepCapture({
             type="button"
             onClick={onBack}
             aria-label="Quay lại"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D9A44F] text-[#E9B95F] transition hover:bg-white/10"
+            className="flex h-9 w-9 items-center justify-center text-[#E9B95F] transition hover:bg-white/10"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-5 w-5"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                d="M19 12H5m7 7-7-7 7-7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ArrowLeftCircle/>
           </button>
         </div>
         {/* Back button */}
 
         {/* Heading */}
-        <header className="mt-5 shrink-0 text-center sm:mt-7">
+        <header className="shrink-0 text-center sm:mt-7">
           <h1 className="font-serif text-[clamp(25px,7vw,34px)] leading-tight tracking-wide text-[#FFF7ED]">
             CHỌN HOẶC CHỤP ẢNH
           </h1>
@@ -337,8 +325,8 @@ export function StepCapture({
         />
 
         {/* Upload area */}
-        <div className="mt-7 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-8">
-          <div className="relative flex aspect-square w-[min(65vw,210px)] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
+        <div className="mt-3 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-3">
+          <div className="relative aspect-square w-[min(65vw,210px)] shrink-0 overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
             {cropSource ? (
               <Cropper
                 ref={cropperRef}
@@ -446,18 +434,9 @@ export function StepCapture({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <svg
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    className="h-10 w-10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  >
-                    <path
-                      d="M24 11v26M11 24h26"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <div>
+                    <h1 className="text-5xl">+</h1>
+                  </div>
                 )}
               </button>
             )}
@@ -532,7 +511,7 @@ export function StepCapture({
               disabled={photoSource === "camera" || cameraOpen}
               className={goldButton}
             >
-              <span aria-hidden="true">↑</span>
+              <span aria-hidden="true"><ArrowUp className="w-4 h-4"/></span>
               Tải ảnh lên
             </button>
 
@@ -542,7 +521,7 @@ export function StepCapture({
               disabled={photoSource === "upload" || cameraOpen}
               className={goldButton}
             >
-              <span aria-hidden="true">◎</span>
+              <span aria-hidden="true"><FocusIcon className="w-4 h-4"/></span>
               Chụp ảnh
             </button>
           </div>

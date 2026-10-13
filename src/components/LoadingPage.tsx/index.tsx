@@ -29,7 +29,7 @@ export default function LoadingPage({
         {/* Star emblem: public/2 25.png */}
         <div className="mx-auto mb-5 flex h-26.5 w-26.5 items-center justify-center rounded-full bg-[#050b43]">
           <img
-            src={`${import.meta.env.BASE_URL}2%2025.png`}
+            src="/2 25.png"
             alt="Ngôi sao phát sáng"
             className="h-22.5 w-22.5 animate-[pulse_2s_ease-in-out_infinite] object-contain"
           />
