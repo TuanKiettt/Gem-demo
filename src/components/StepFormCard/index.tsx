@@ -18,6 +18,7 @@ interface StepFormCardProps {
   onGenerated: (url: string) => void;
   onGenerationStart: () => void;
   onGenerationProgress: (progress: InvitationGenerationProgress) => void;
+  onServiceCreated: (serviceId: string) => void;
   onGenerationError: () => void;
 }
 
@@ -29,6 +30,7 @@ export function StepFormCard({
   onGenerated,
   onGenerationStart,
   onGenerationProgress,
+  onServiceCreated,
   onGenerationError,
 }: StepFormCardProps) {
   const [generationLoading, setGenerationLoading] = useState(false);
@@ -67,6 +69,7 @@ export function StepFormCard({
           uploadedImageUrl,
         },
         onGenerationProgress,
+        onServiceCreated,
       );
 
       onGenerated(generatedUrl);
@@ -107,7 +110,7 @@ export function StepFormCard({
 
       {/* Heading */}
       <header className="relative z-10 mt-7 w-full max-w-md shrink-0 text-center">
-        <h2 className="whitespace-nowrap font-serif text-[clamp(23px,6vw,34px)] uppercase leading-tight tracking-[-0.04em] text-[#fff7e8]">
+        <h2 className="whitespace-nowrap font-serif text-[clamp(1.4375rem,6vw,2.125rem)] uppercase leading-tight tracking-[-0.04em] text-[#fff7e8]">
           Xác nhận thông tin
         </h2>
         <p className="mt-1 text-sm text-white/65">
@@ -118,7 +121,7 @@ export function StepFormCard({
       {/* Main content */}
       <div className="relative z-10 my-auto flex w-full max-w-md flex-col items-center py-6">
         {/* Portrait */}
-        <div className="relative h-40 w-39 shrink-0 overflow-hidden rounded-2xl border-2 border-[#d7a04c] bg-[#172344] shadow-[0_8px_30px_rgba(0,0,0,0.3)] sm:h-44 sm:w-43">
+        <div className="relative h-40 w-39 shrink-0 overflow-hidden rounded-2xl border-2 border-[#d7a04c] bg-[#172344] shadow-[0_0.5rem_1.875rem_rgba(0,0,0,0.3)]">
           {preview ? (
             <img
               src={preview}
@@ -133,10 +136,10 @@ export function StepFormCard({
         </div>
 
         {/* Information card */}
-        <div className="mt-5 w-full rounded-2xl border border-[#c9954d] bg-[#111a30]/90 px-5 py-5 shadow-[0_12px_35px_rgba(0,0,0,0.2)] backdrop-blur-md sm:px-6">
+        <div className="mt-5 w-full rounded-2xl border border-[#c9954d] bg-[#111a30]/90 px-5 py-5 shadow-[0_0.75rem_2.1875rem_rgba(0,0,0,0.2)] backdrop-blur-md">
           <div className="grid grid-cols-2 gap-x-5 gap-y-5">
             <div className="min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Họ và tên
               </p>
               <p className="mt-1 text-base font-bold text-white">
@@ -145,7 +148,7 @@ export function StepFormCard({
             </div>
 
             <div className="min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Giới tính
               </p>
               <p className="mt-1 text-sm text-white/90">
@@ -158,7 +161,7 @@ export function StepFormCard({
             </div>
 
             <div className="min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Email
               </p>
               <p className="mt-1 text-sm text-white/90">
@@ -167,7 +170,7 @@ export function StepFormCard({
             </div>
 
             <div className="min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Số điện thoại
               </p>
               <p className="mt-1 text-sm text-white/90">
@@ -176,7 +179,7 @@ export function StepFormCard({
             </div>
 
             <div className="col-span-2 min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
+              <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Khung giờ trải nghiệm
               </p>
               <p className="mt-1 text-sm text-white/90">

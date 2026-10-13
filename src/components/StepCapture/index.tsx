@@ -46,6 +46,7 @@ export function StepCapture({
 
   useEffect(() => {
     if (cameraOpen && videoRef.current && streamRef.current) {
+      videoRef.current.setAttribute("webkit-playsinline", "true");
       videoRef.current.srcObject = streamRef.current;
     }
   }, [cameraOpen]);
@@ -277,7 +278,7 @@ export function StepCapture({
   };
 
   const goldButton =
-    "flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-3 text-xs font-bold text-white transition hover:bg-white/10 active:scale-[0.98] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm";
+    "flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-3 text-xs font-bold text-white transition hover:bg-white/10 active:scale-[0.98] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-35";
 
   return (
     <main>
@@ -289,18 +290,18 @@ export function StepCapture({
 
       {/* Main content */}
       <section
-        className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-6 pt-5 sm:px-7 ${
+        className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-6 pt-5 ${
           cropSource ? "hidden" : ""
         }`}
       >
 
         {/* Heading */}
-        <header className="shrink-0 text-center sm:mt-7">
-          <h1 className="font-serif text-[clamp(25px,7vw,34px)] leading-tight tracking-wide text-[#FFF7ED]">
+        <header className="shrink-0 text-center">
+          <h1 className="font-serif text-[clamp(1.5625rem,7vw,2.125rem)] leading-tight tracking-wide text-[#FFF7ED]">
             CHỌN HOẶC CHỤP ẢNH
           </h1>
 
-          <p className="mt-2 text-xs leading-5 text-[#C0C9DD] sm:text-sm">
+          <p className="mt-2 text-xs leading-5 text-[#C0C9DD]">
             Ảnh của bạn sẽ được sử dụng để tạo thiệp mời
           </p>
         </header>
@@ -318,8 +319,8 @@ export function StepCapture({
         />
 
         {/* Upload area */}
-        <div className="mt-3 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5 sm:mt-3">
-          <div className="relative aspect-square w-[min(75vw,250px)] shrink-0 overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
+        <div className="mt-3 flex min-h-62.5 flex-1 flex-col items-center justify-center rounded-3xl border border-dashed border-[#D7A15B] bg-[#101A35]/75 px-4 py-5">
+          <div className="relative aspect-square w-[min(75vw,15.625rem)] shrink-0 overflow-hidden rounded-full bg-[#39323A] text-[#DFA45F]">
             {cameraOpen ? (
               <>
                 <video
@@ -327,8 +328,9 @@ export function StepCapture({
                   autoPlay
                   muted
                   playsInline
+                  disablePictureInPicture
                   aria-label="Hình ảnh camera trực tiếp"
-                  className="h-full w-full scale-x-[-1] object-cover"
+                  className="pointer-events-none absolute inset-0 h-full w-full scale-x-[-1] object-cover"
                 />
                 {countdown !== null && (
                   <div
@@ -338,7 +340,7 @@ export function StepCapture({
                   >
                     <span
                       key={countdown}
-                      className="animate-[capture-countdown_1s_ease-out] text-6xl font-black tabular-nums text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+                      className="animate-[capture-countdown_1s_ease-out] text-6xl font-black tabular-nums text-white drop-shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.8)]"
                     >
                       {countdown}
                     </span>
@@ -422,7 +424,7 @@ export function StepCapture({
 
         {/* Upload / Camera buttons */}
         {!cropSource && (
-          <div className="mt-5 grid shrink-0 grid-cols-2 gap-3 sm:gap-4">
+          <div className="mt-5 grid shrink-0 grid-cols-2 gap-3">
             {cameraOpen ? (
               <>
                 <button
@@ -475,12 +477,12 @@ export function StepCapture({
         )}
 
         {/* Continue button */}
-        <div className="mt-6 flex shrink-0 justify-center sm:mt-8">
+        <div className="mt-6 flex shrink-0 justify-center">
           <button
             type="button"
             onClick={() => void handleContinue()}
             disabled={!photo || uploading || Boolean(cropSource)}
-            className="w-[min(100%,280px)] rounded-full border border-[#FFF5EA]/80 px-5 py-3 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-[min(100%,17.5rem)] rounded-full border border-[#FFF5EA]/80 px-5 py-3 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             style={{
               background:
                 "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
@@ -491,8 +493,8 @@ export function StepCapture({
         </div>
       </section>
       {cropSource && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4">
-          <div className="flex h-full max-h-[900px] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#D7A15B]/70 bg-[#101A35] shadow-2xl">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/75 p-2">
+          <div className="flex h-full max-h-[90dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#D7A15B]/70 bg-[#101A35] shadow-2xl">
             <header className="relative flex h-16 shrink-0 items-center justify-center border-b border-white/10 px-16">
               <button
                 type="button"
@@ -560,7 +562,7 @@ export function StepCapture({
               />
             </div>
 
-            <footer className="shrink-0 border-t border-white/10 px-5 py-4 sm:px-8">
+            <footer className="shrink-0 border-t border-white/10 px-5 py-4">
               <button
                 type="button"
                 onClick={() => void applyCrop()}

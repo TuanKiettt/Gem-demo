@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ArrowDown, LoaderCircle, RotateCcw } from "lucide-react";
 
 interface StepResultProps {
@@ -7,6 +7,11 @@ interface StepResultProps {
 }
 
 interface VideoSize {
+  width: number;
+  height: number;
+}
+
+interface VideoAspectRatio {
   width: number;
   height: number;
 }
@@ -25,17 +30,63 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
   const [downloadError, setDownloadError] = useState("");
   const [hasPlayed, setHasPlayed] = useState(false);
   const [videoSize, setVideoSize] = useState<VideoSize | null>(null);
+  const [videoAspectRatio, setVideoAspectRatio] =
+    useState<VideoAspectRatio | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const videoMimeType = generatedMediaUrl
     ? getVideoMimeType(generatedMediaUrl)
     : null;
 
+  useLayoutEffect(() => {
+    if (!hasPlayed || !videoAspectRatio) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const resizeVideo = () => {
+      const styles = window.getComputedStyle(section);
+      const horizontalPadding =
+        Number.parseFloat(styles.paddingLeft) +
+        Number.parseFloat(styles.paddingRight);
+      const verticalPadding =
+        Number.parseFloat(styles.paddingTop) +
+        Number.parseFloat(styles.paddingBottom);
+      const gap = Number.parseFloat(styles.rowGap) || 0;
+      const controlsHeight =
+        controlsRef.current?.getBoundingClientRect().height ?? 0;
+      const maxWidth = Math.max(0, section.clientWidth - horizontalPadding);
+      const maxHeight = Math.max(
+        0,
+        section.clientHeight - verticalPadding - gap - controlsHeight,
+      );
+      const scale = Math.min(
+        maxWidth / videoAspectRatio.width,
+        maxHeight / videoAspectRatio.height,
+      );
+
+      if (Number.isFinite(scale) && scale > 0) {
+        setVideoSize({
+          width: videoAspectRatio.width * scale,
+          height: videoAspectRatio.height * scale,
+        });
+      }
+    };
+
+    resizeVideo();
+    const observer = new ResizeObserver(resizeVideo);
+    observer.observe(section);
+    if (controlsRef.current) observer.observe(controlsRef.current);
+
+    return () => observer.disconnect();
+  }, [hasPlayed, videoAspectRatio]);
+
   const handleVideoEnded = (video: HTMLVideoElement) => {
     if (video.videoWidth > 0 && video.videoHeight > 0) {
-      const aspectRatio = video.videoWidth / video.videoHeight;
-      const maxWidth = Math.min(320, window.innerWidth * 0.7);
-      const maxHeight = window.innerHeight * 0.62;
-      const width = Math.min(maxWidth, maxHeight * aspectRatio);
-      setVideoSize({ width, height: width / aspectRatio });
+      setVideoAspectRatio({
+        width: video.videoWidth,
+        height: video.videoHeight,
+      });
     }
     setHasPlayed(true);
     video.currentTime = 0;
@@ -77,7 +128,8 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
 
   return (
     <section
-      className={`fixed inset-0 z-100 flex h-dvh w-screen flex-col items-center justify-center overflow-hidden ${
+      ref={sectionRef}
+      className={`absolute inset-0 z-100 flex h-full w-full flex-col items-center justify-center overflow-hidden ${
         hasPlayed ? "gap-6 px-5 py-8" : ""
       }`}
     >
@@ -128,7 +180,10 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
         </p>
       )}
       {hasPlayed && (
-        <div className="relative z-10 flex w-[min(100%,280px)] flex-col gap-3">
+        <div
+          ref={controlsRef}
+          className="relative z-10 flex w-[min(100%,17.5rem)] flex-col gap-3"
+        >
           {videoMimeType && (
             <button
               type="button"

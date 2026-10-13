@@ -172,28 +172,28 @@ export function StepAuth({ onNext }: StepAuthProps) {
           relative mx-auto flex min-h-dvh w-full max-w-lg
           flex-col justify-center px-6F
           py-8
-          [@media(max-height:720px)]:py-5
+          [@media(max-height:45rem)]:py-5
         "
       >
         {/* Heading */}
-        <header className="mb-5 text-center [@media(max-height:720px)]:mb-3">
+        <header className="mb-5 text-center [@media(max-height:45rem)]:mb-3">
           <h1
             className="
               font-serif text-3xl font-normal tracking-wide
-              text-[#FFF5E9] sm:text-4xl
+              text-[#FFF5E9]
             "
           >
             THÔNG TIN
           </h1>
 
-          <p className="mt-2 text-xs leading-5 text-[#C4CCDF] sm:text-sm">
+          <p className="mt-2 text-xs leading-5 text-[#C4CCDF]">
             Cá nhân hóa trải nghiệm đặc biệt dành riêng cho bạn
           </p>
         </header>
 
         {/* Form */}
         <form
-          className="flex flex-col gap-4 [@media(max-height:720px)]:gap-3"
+          className="flex flex-col gap-4 [@media(max-height:45rem)]:gap-3"
           onSubmit={handleSubmit(handleRegister)}
           noValidate
         >
@@ -298,7 +298,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
               KHUNG GIỜ TRẢI NGHIỆM
             </legend>
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {(["09:00 - 11:30", "11:30 - 13:30", "13:30 - 16:00"] as const).map(
                 (item) => (
                   <button
@@ -315,8 +315,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
                     }
                     className={`
                       whitespace-nowrap rounded-xl border
-                      px-1 py-3 text-[11px] transition
-                      sm:text-xs
+                      px-1 py-3 text-[0.6875rem] transition
                       ${
                         time === item
                           ? "border-[#F0CDA7] bg-[#B98A66]/30 text-[#FFE4C8]"
@@ -351,7 +350,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
             type="submit"
             disabled={!gender || !time || isSubmitting}
             className={`
-              mx-auto mt-0 w-[min(100%,280px)]
+              mx-auto mt-0 w-[min(100%,17.5rem)]
               rounded-full border border-[#FFF5EA]/80
               px-5 py-3 text-sm font-bold tracking-wide
               text-[#160D08] shadow-lg

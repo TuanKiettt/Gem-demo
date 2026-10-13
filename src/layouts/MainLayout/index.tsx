@@ -7,21 +7,19 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="relative isolate h-dvh min-h-125 w-full overflow-hidden bg-[#030817]">
+    <div className="flex min-h-dvh w-full justify-center bg-[#030817]">
+      <div className="relative isolate h-dvh min-h-125 w-full max-w-[26.875rem] overflow-hidden bg-[#030817] shadow-2xl ring-1 ring-white/10">
+        <img
+          src="/BackGround.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
+        />
 
-      {/* Background scale theo màn hình */}
-      <img
-        src={`${import.meta.env.BASE_URL}02-1.png`}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
-      />
-
-      {/* Nội dung nằm trên background */}
-      <main className="relative z-10 h-full w-full">
-        {children}
-      </main>
-
+        <main className="relative z-10 h-full w-full">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

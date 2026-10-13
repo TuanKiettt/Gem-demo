@@ -16,21 +16,21 @@ export default function LoadingPage({
     : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-linear-to-b from-[#08132f]/80 via-[#0b1839]/75 to-[#123b91]/85 px-5">
+    <div className="absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-linear-to-b from-[#08132f]/80 via-[#0b1839]/75 to-[#123b91]/85 px-5">
       {/* Ambient glow */}
       <div className="pointer-events-none absolute -bottom-20 left-1/2 z-0 h-72 w-[140%] -translate-x-1/2 rounded-[50%] bg-blue-600/20 blur-3xl" />
 
       {/* Loading card */}
       <section
-        className="relative z-10 w-full max-w-sm rounded-[26px] border border-[#d6a052] bg-[#111c39]/95 px-6 py-9 shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur-md sm:px-8"
+        className="relative z-10 w-full max-w-sm rounded-[1.625rem] border border-[#d6a052] bg-[#111c39]/95 px-6 py-9 shadow-[0_1.25rem_3.75rem_rgba(0,0,0,0.3)] backdrop-blur-md"
         aria-label="Tiến trình tạo thiệp"
         aria-live="polite"
       >
-        {/* Star emblem: public/2 25.png */}
+        {/* Star emblem */}
         <div className="mx-auto mb-5 flex h-26.5 w-26.5 items-center justify-center rounded-full bg-[#050b43]">
           <img
-            src="/2 25.png"
-            alt="Ngôi sao phát sáng"
+            src="/LoadingIcon.png"
+            alt="loading-icon"
             className="h-22.5 w-22.5 animate-[pulse_2s_ease-in-out_infinite] object-contain"
           />
         </div>
@@ -41,7 +41,7 @@ export default function LoadingPage({
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-5 text-center text-xs leading-6 text-[#aeb9d7] sm:text-sm">
+        <p className="mt-5 text-center text-xs leading-6 text-[#aeb9d7]">
           {subtitle}
         </p>
 

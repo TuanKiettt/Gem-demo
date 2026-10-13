@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import gsap from "gsap";
 import type { Session } from "@supabase/supabase-js";
@@ -10,7 +10,10 @@ import { StepFormCard } from "./components/StepFormCard";
 import { StepResult } from "./components/StepResult";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import LoadingPage from "./components/LoadingPage.tsx";
-import type { InvitationGenerationProgress } from "./api/invitation";
+import {
+  waitForInvitationGeneration,
+  type InvitationGenerationProgress,
+} from "./api/invitation";
 
 type WorkflowStep = 0 | 1 | 2 | 3 | 4;
 type PhotoSource = "upload" | "camera";
@@ -18,26 +21,34 @@ type PhotoSource = "upload" | "camera";
 const BTN_CLASSES =
   "rounded-full px-10 py-4 text-xl font-semibold disabled:opacity-30 transition focus-visible:outline-4 focus-visible:outline-offset-4";
 const GENERATED_MEDIA_STORAGE_KEY = "generatedInvitationMediaUrl";
+const PENDING_GENERATION_STORAGE_KEY = "pendingInvitationGenerationId";
 
 function App() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const previousStepRef = useRef<WorkflowStep>(0);
   const isTransitioningRef = useRef(false);
-  const [step, setStep] = useState<WorkflowStep>(() =>
-    localStorage.getItem(GENERATED_MEDIA_STORAGE_KEY) ? 4 : 0,
-  );
+  const [step, setStep] = useState<WorkflowStep>(0);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [photoSource, setPhotoSource] = useState<PhotoSource | null>(null);
-  const [generatedMediaUrl, setGeneratedMediaUrl] = useState<string | null>(
-    () => localStorage.getItem(GENERATED_MEDIA_STORAGE_KEY),
+  const [generatedMediaUrl, setGeneratedMediaUrl] = useState<string | null>(null);
+  const [resumeServiceId] = useState(() =>
+    localStorage.getItem(PENDING_GENERATION_STORAGE_KEY),
   );
-  const [generationActive, setGenerationActive] = useState(false);
+  const [generationActive, setGenerationActive] = useState(
+    () => Boolean(localStorage.getItem(PENDING_GENERATION_STORAGE_KEY)),
+  );
+  const [generationResumeError, setGenerationResumeError] = useState("");
   const [generationProgress, setGenerationProgress] =
     useState<InvitationGenerationProgress>({
       progress: null,
       message: "Đang gửi yêu cầu tạo thiệp đến AI...",
     });
+
+  useEffect(() => {
+    localStorage.removeItem(GENERATED_MEDIA_STORAGE_KEY);
+  }, []);
+
   const handleSessionChange = useCallback((nextSession: Session | null) => {
     if (nextSession) {
       return;
@@ -49,9 +60,48 @@ function App() {
     setPhotoSource(null);
     setGeneratedMediaUrl(null);
     localStorage.removeItem(GENERATED_MEDIA_STORAGE_KEY);
+    localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
     setGenerationActive(false);
+    setGenerationResumeError("");
   }, []);
   const authStatus = useSupabaseSession(handleSessionChange);
+
+  useEffect(() => {
+    if (!resumeServiceId) return;
+
+    let active = true;
+    const controller = new AbortController();
+    void waitForInvitationGeneration(
+      resumeServiceId,
+      (progress) => {
+        if (active) setGenerationProgress(progress);
+      },
+      controller.signal,
+      true,
+    )
+      .then((mediaUrl) => {
+        if (!active) return;
+        localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
+        setGeneratedMediaUrl(mediaUrl);
+        setGenerationActive(false);
+        setStep(4);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Không thể tiếp tục theo dõi tiến trình tạo thiệp:", error);
+        setGenerationActive(false);
+        setGenerationResumeError(
+          error instanceof Error
+            ? error.message
+            : "Không thể tiếp tục theo dõi tiến trình tạo thiệp.",
+        );
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [resumeServiceId]);
 
   useLayoutEffect(() => {
     const wrapper = wrapRef.current;
@@ -78,7 +128,20 @@ function App() {
   }, [step]);
 
   if (authStatus === "loading") {
-    return <p className="text-center mt-20 text-lg">Đang kiểm tra phiên đăng nhập...</p>;
+    return (
+      <MainLayout>
+        {generationActive ? (
+          <LoadingPage
+            progress={generationProgress.progress}
+            subtitle="Đang kết nối lại với tiến trình tạo thiệp..."
+          />
+        ) : (
+          <p className="mt-20 text-center text-lg">
+            Đang kiểm tra phiên đăng nhập...
+          </p>
+        )}
+      </MainLayout>
+    );
   }
 
   const animateTransition = (nextStep: WorkflowStep) => {
@@ -103,6 +166,7 @@ function App() {
     setPhotoSource(null);
     setGeneratedMediaUrl(null);
     localStorage.removeItem(GENERATED_MEDIA_STORAGE_KEY);
+    localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
     Cookies.remove("uploadedAvatar", { path: "" });
     Cookies.remove("uploadedAvatar", { path: "/" });
     localStorage.removeItem("uploadedAvatar");
@@ -115,6 +179,15 @@ function App() {
       <div ref={wrapRef} className="w-full h-full flex flex-col items-center justify-center">
         {step === 0 && (
           <StepWelcome onNext={() => animateTransition(authStatus === "authenticated" ? 2 : 1)} />
+        )}
+
+        {generationResumeError && (
+          <p
+            role="alert"
+            className="absolute inset-x-5 top-5 z-20 rounded-xl border border-red-300/40 bg-red-950/80 p-3 text-center text-sm text-red-100"
+          >
+            {generationResumeError}
+          </p>
         )}
 
         {step === 1 && (
@@ -143,19 +216,27 @@ function App() {
             preview={preview}
             uploadedImageUrl={uploadedImageUrl}
             onGenerated={(url) => {
-              localStorage.setItem(GENERATED_MEDIA_STORAGE_KEY, url);
+              localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
               setGeneratedMediaUrl(url);
               setGenerationActive(false);
+              setGenerationResumeError("");
             }}
             onGenerationStart={() => {
               setGenerationProgress({
                 progress: null,
                 message: "Đang gửi yêu cầu tạo thiệp đến AI...",
               });
-              setGenerationActive(true);
+              setGenerationResumeError("");
             }}
             onGenerationProgress={setGenerationProgress}
-            onGenerationError={() => setGenerationActive(false)}
+            onServiceCreated={(serviceId) => {
+              localStorage.setItem(PENDING_GENERATION_STORAGE_KEY, serviceId);
+              setGenerationActive(true);
+            }}
+            onGenerationError={() => {
+              localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
+              setGenerationActive(false);
+            }}
             onBack={() => animateTransition(2)}
             onNext={() => animateTransition(4)}
           />

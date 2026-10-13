@@ -188,14 +188,17 @@ const getMediaUrl = (value: unknown): string | null => {
   return null;
 };
 
-const waitForGeneratedImage = (
+export const waitForInvitationGeneration = (
   id: string,
   onProgress?: (progress: InvitationGenerationProgress) => void,
+  signal?: AbortSignal,
+  checkCurrentStatus = false,
 ): Promise<string> =>
   new Promise((resolve, reject) => {
     let finished = false;
+    const channelId = crypto.randomUUID();
     const channel = supabase
-      .channel(`invitation-service-${id}`)
+      .channel(`invitation-service-${id}-${channelId}`)
       .on(
         "postgres_changes",
         {
@@ -223,6 +226,7 @@ const waitForGeneratedImage = (
 
     const cleanup = () => {
       window.clearTimeout(timeout);
+      signal?.removeEventListener("abort", handleAbort);
       void supabase.removeChannel(channel);
     };
 
@@ -234,6 +238,16 @@ const waitForGeneratedImage = (
       else if (imageUrl) resolve(imageUrl);
       else reject(new Error("Service AI hoàn tất nhưng không có URL media kết quả."));
     };
+
+    const handleAbort = () => {
+      complete(new DOMException("Đã dừng theo dõi tiến trình.", "AbortError"));
+    };
+
+    if (signal?.aborted) {
+      handleAbort();
+      return;
+    }
+    signal?.addEventListener("abort", handleAbort, { once: true });
 
     const handleServiceUpdate = async (value: unknown) => {
       if (finished) return;
@@ -292,6 +306,32 @@ const waitForGeneratedImage = (
           progress: null,
           message: "Đã kết nối với AI. Đang chờ cập nhật tiến trình...",
         });
+        if (!checkCurrentStatus) return;
+
+        void supabase
+          .from("service")
+          .select("status,response")
+          .eq("id", id)
+          .maybeSingle()
+          .then(({ data, error }) => {
+            if (error) {
+              complete(
+                new Error(
+                  `Không thể khôi phục trạng thái tiến trình AI: ${error.message}`,
+                ),
+              );
+              return;
+            }
+            if (!data) {
+              complete(
+                new Error(
+                  "Không tìm thấy tiến trình AI để khôi phục. Vui lòng kiểm tra quyền truy cập bảng service.",
+                ),
+              );
+              return;
+            }
+            void handleServiceUpdate(data);
+          });
       } else if (
         ["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(status)
       ) {
@@ -315,6 +355,7 @@ export async function generateInvitation(
     uploadedImageUrl,
   }: GenerateInvitationArgs,
   onProgress?: (progress: InvitationGenerationProgress) => void,
+  onServiceCreated?: (serviceId: string) => void,
 ): Promise<string> {
   let stage = "validating uploaded image";
   if (!uploadedImageUrl) {
@@ -359,12 +400,16 @@ export async function generateInvitation(
       );
     }
 
+    onServiceCreated?.(serviceId);
     stage = "waiting for AI result";
     onProgress?.({
       progress: getReportedProgress(createdService),
       message: "AI đã nhận yêu cầu. Đang chờ tiến trình xử lý...",
     });
-    const generatedMediaUrl = await waitForGeneratedImage(serviceId, onProgress);
+    const generatedMediaUrl = await waitForInvitationGeneration(
+      serviceId,
+      onProgress,
+    );
     return generatedMediaUrl;
   } catch (error) {
     logAiError(stage, error);
