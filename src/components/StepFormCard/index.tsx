@@ -86,7 +86,7 @@ export function StepFormCard({
   };
 
   return (
-    <section>
+    <section className="px-5">
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-[#07132f]/75 via-[#101c43]/70 to-[#102d78]/85" />
 
@@ -139,7 +139,7 @@ export function StepFormCard({
               <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Họ và tên
               </p>
-              <p className="mt-1 truncate text-base font-bold text-white">
+              <p className="mt-1 text-base font-bold text-white">
                 {profile?.fullName || "Chưa có thông tin"}
               </p>
             </div>
@@ -148,7 +148,7 @@ export function StepFormCard({
               <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Giới tính
               </p>
-              <p className="mt-1 truncate text-sm text-white/90">
+              <p className="mt-1 text-sm text-white/90">
                 {profile?.gender === "NAM"
                   ? "Nam"
                   : profile?.gender === "NỮ"
@@ -161,7 +161,7 @@ export function StepFormCard({
               <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Email
               </p>
-              <p className="mt-1 truncate text-sm text-white/90">
+              <p className="mt-1 text-sm text-white/90">
                 {profile?.email || "Chưa có thông tin"}
               </p>
             </div>
@@ -170,7 +170,7 @@ export function StepFormCard({
               <p className="text-[11px] font-bold uppercase tracking-wide text-[#e9aa57]">
                 Số điện thoại
               </p>
-              <p className="mt-1 truncate text-sm text-white/90">
+              <p className="mt-1 text-sm text-white/90">
                 {profile?.phone || "Chưa có thông tin"}
               </p>
             </div>

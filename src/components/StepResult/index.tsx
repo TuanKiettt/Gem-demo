@@ -44,41 +44,13 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
     });
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!generatedMediaUrl) return;
 
-    setDownloading(true);
-    setDownloadError("");
-    try {
-      const response = await fetch(generatedMediaUrl);
-      if (!response.ok) {
-        throw new Error(`Tải video thất bại (${response.status}).`);
-      }
-
-      const videoBlob = await response.blob();
-      const downloadUrl = URL.createObjectURL(videoBlob);
-      const link = document.createElement("a");
-      const extension =
-        new URL(generatedMediaUrl).pathname.match(/\.(mp4|webm|ogg|mov)$/i)?.[0] ??
-        ".mp4";
-      link.href = downloadUrl;
-      link.download = `thiep-gem${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
-    } catch (error) {
-      console.error("Không thể tải video thiệp:", error);
-      setDownloadError(
-        error instanceof TypeError
-          ? "Máy chủ video không cho phép tải trực tiếp từ trình duyệt (CORS)."
-          : error instanceof Error
-            ? error.message
-            : "Không thể tải video. Vui lòng thử lại.",
-      );
-    } finally {
-      setDownloading(false);
-    }
+    const link = document.createElement("a"); //Tạo sẳn thẻ <a>
+    link.href = `${generatedMediaUrl}?download`;
+    link.download = "thiep-gem.mp4";
+    link.click();
   };
 
   return (
@@ -139,7 +111,6 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
             <button
               type="button"
               onClick={handleDownload}
-              disabled={downloading}
               className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#FFF5EA]/80 px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               style={{
                 background:
@@ -147,7 +118,10 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
               }}
             >
               {downloading ? (
-                <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" />
+                <LoaderCircle
+                  className="h-5 w-5 animate-spin"
+                  aria-hidden="true"
+                />
               ) : (
                 <ArrowDown className="h-5 w-5" aria-hidden="true" />
               )}
