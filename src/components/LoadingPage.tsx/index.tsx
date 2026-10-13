@@ -62,13 +62,12 @@ export default function LoadingPage({
                 ? "w-1/3 animate-[progress-indeterminate_1.6s_ease-in-out_infinite]"
                 : "transition-[width] duration-300 ease-out"
             }`}
-            style={value === null ? undefined : { width: `${value}%` }}
           />
         </div>
 
         {/* Percentage */}
         <p className="mt-4 text-center text-sm font-bold tabular-nums text-[#e9ad62]">
-          {value === null ? "Đang cập nhật tiến trình..." : `${value}%`}
+          "Đang cập nhật tiến trình..."
         </p>
       </section>
     </div>
