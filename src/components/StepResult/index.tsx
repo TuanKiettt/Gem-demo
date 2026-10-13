@@ -44,13 +44,35 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
     });
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!generatedMediaUrl) return;
 
-    const link = document.createElement("a"); //Tạo sẳn thẻ <a>
-    link.href = `${generatedMediaUrl}?download`;
-    link.download = "thiep-gem.mp4";
-    link.click();
+    setDownloading(true);
+    setDownloadError("");
+
+    try {
+      const response = await fetch(`${generatedMediaUrl}?download`);
+      if (!response.ok) {
+        throw new Error(`Tải thiệp thất bại (HTTP ${response.status}).`);
+      }
+
+      const video = await response.blob();
+      const downloadUrl = URL.createObjectURL(video);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "thiep-gem.mp4";
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    } catch (error) {
+      console.error("Không thể tải video thiệp:", error);
+      setDownloadError(
+        error instanceof Error
+          ? error.message
+          : "Không thể tải video thiệp. Vui lòng thử lại.",
+      );
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
