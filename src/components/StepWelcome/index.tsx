@@ -10,19 +10,12 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         "
     >
       {/* 1. GEM logo */}
-      <div className="relative flex min-h-0 w-full flex-row">
+      <div className="relative flex min-h-0 w-full items-center justify-center">
         {/* Logo góc trái trên */}
         <img
           src="/LogoGEM-02-1.png"
           alt="GEM Center"
-          className="absolute top-[4.5%] left-[6%%] max-w-[45%] object-contain max-h-[10dvh]"
-        />
-
-        {/* Logo góc phải trên */}
-        <img
-          src="/invitation-logo.png"
-          alt="Invitation Logo"
-          className="absolute top-[4.5%] right-[2%] max-w-[45%] object-contain max-h-[6dvh]"
+          className="absolute top-[4.5%] max-w-[45%] object-contain max-h-[10dvh]"
         />
       </div>
 
