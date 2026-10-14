@@ -112,13 +112,13 @@ Avoid identity alteration, face blending, distorted facial features, excessive r
 const femalePrompts = [
   `Use the uploaded user photo as the ONLY identity reference. Transform the person into a high-end futuristic haute couture fashion portrait featuring an extraordinary sculptural silver crystal outfit while preserving her exact facial identity.
 FACE & IDENTITY
-Preserve the person's original facial features, face shape, eyes, nose, lips, jawline, hairstyle, hair color, and recognizable identity. No face blending or identity alteration. Regardless of the original photo angle, generate a natural front-facing or slightly angled fashion portrait with clear facial visibility, direct or near-direct eye contact, and a subtle confident expression.
+Preserve the person’s original facial features, face shape, eyes, nose, lips, jawline, hairstyle, hair color, and recognizable identity. No face blending or identity alteration. Regardless of the original photo angle, generate a natural front-facing or slightly angled fashion portrait with clear facial visibility, direct or near-direct eye contact, and a subtle confident expression.
 Apply subtle professional makeup and refined beauty retouching. Conceal blemishes, dark circles, and uneven skin tone. Create smoother, healthier-looking skin while preserving realistic skin texture and natural facial details. Enhance the overall look with a polished, elegant, editorial beauty finish without making the face look artificial or overly beautified.
 FASHION & OUTFIT
 Generate an extraordinary futuristic silver crystal haute couture outfit featuring dramatic three-dimensional architectural structures, highly reflective mirrored metallic surfaces, and intricate transparent crystal embellishments. The outfit should feel luxurious, sophisticated, feminine, sculptural, premium, and futuristic, resembling an exclusive avant-garde fashion masterpiece.
 Create a striking architectural shoulder design composed of oversized angular silver structures extending upward and outward from both shoulders. These structures should resemble fragmented polished mirrors and large faceted crystals, featuring overlapping triangular, diamond-shaped, and irregular geometric metallic panels arranged in a sophisticated asymmetrical composition.
-The outfit should feature a refined deep V-shaped neckline surrounded by delicate silver chains, transparent crystal ornaments, small faceted gemstones, and intricate metallic detailing. The chest and bodice should incorporate a luxurious network of crystalline mesh, reflective silver fragments, and finely interconnected jewel-like embellishments.
-Maintain a tailored, body-contouring couture silhouette with layered geometric metallic elements cascading naturally from the shoulders toward the waist. Use polished chrome, platinum silver, highly reflective mirrored surfaces, and transparent faceted crystals as the dominant materials.
+The outfit should feature a refined, deep V-shaped couture neckline design surrounded by delicate silver chains, transparent crystal ornaments, small faceted gemstones, and intricate metallic detailing. The upper front of the garment and structured bodice should incorporate a luxurious network of decorative crystalline mesh, reflective silver fragments, and finely interconnected jewel-like embellishments. The transparent crystal decorations are layered over an opaque silver garment foundation, maintaining the sophisticated deep V-shaped design.
+Maintain a tailored, figure-following couture silhouette with layered geometric metallic elements cascading naturally from the shoulders toward the waist. Use polished chrome, platinum silver, highly reflective mirrored surfaces, and transparent faceted crystals as the dominant materials.
 The overall outfit should feel dramatic, elegant, architectural, and exceptionally luxurious, with realistic metallic reflections, sophisticated material depth, and refined crystal transparency. Preserve the distinctive oversized sculptural shoulders, intricate crystal-covered neckline, and elaborate silver couture craftsmanship.
 The entire outfit must be generated from text instructions without requiring any additional fashion reference images. Avoid ordinary metallic dresses, simple silver clothing, robotic armor, mechanical structures, cheap costume materials, or exaggerated science-fiction designs.
 BODY & POSE
@@ -135,50 +135,12 @@ Output a high-resolution vertical PNG with a 3:4 aspect ratio.
 STRICT PRIORITIES
 Preserve the exact identity from the uploaded photo.
 Natural beauty retouching without changing identity.
-Generate an extraordinary futuristic silver crystal haute couture outfit with oversized geometric mirrored shoulder structures, intricate crystalline embellishments, and a luxurious deep V-shaped neckline.
+Generate an extraordinary futuristic silver crystal haute couture outfit with oversized geometric mirrored shoulder structures, intricate crystalline embellishments, and a luxurious deep V-shaped couture neckline.
 Maintain realistic polished chrome reflections, transparent crystal materials, and sophisticated architectural couture craftsmanship.
 Randomized pose that feels natural, elegant, stylish, and editorial.
 Maintain balanced feminine body proportions and clear facial visibility.
 Fully transparent background with clean cutout edges.
 The final result must look like an authentic luxury haute couture fashion campaign portrait featuring an extraordinary sculptural silver crystal outfit, not an AI-generated illustration, CGI render, or science-fiction costume.`,
-  `Use the uploaded user photo as the ONLY identity reference. Transform the person into a high-end futuristic fashion portrait while preserving her exact facial identity.
-VIBE
-Cold, aloof, imposing, luxury fashion campaign. Minimal, severe, sculptural, powerful. Think Balenciaga or Mugler editorial, not a friendly portrait. It must look like a genuine magazine photograph of a real person wearing a real garment, not a render and not an AI image.
-POSE & EXPRESSION
-Standing perfectly upright and symmetrical to the camera, body facing straight forward, shoulders squared and level.
-Chin slightly lowered, eyes looking down into the lens with a cool, detached, slightly intimidating gaze. Lips closed and neutral, no smile, no soft expression.
-Both arms hang straight down along the body, close to the torso, stiff and still like a statuesque runway pose. Hands out of frame.
-Neck long and straight, head perfectly upright.
-CAMERA & FRAMING
-Strong LOW-ANGLE shot: the camera is placed at chest height and angled upward, so we look up at her. This makes her look tall, powerful, and monumental. 85mm lens, shot from a distance to keep natural proportions (no wide-angle stretching).
-Tight editorial crop: the top of her head sits close to the top edge of the frame, and the bottom of the frame ends just below the waistband. UPPER BODY ONLY, with no skirt and no lower body. Square-ish composition, but output at 3:4.
-SKIN & FACE
-Natural skin with visible pores and fine texture, matte finish with minimal shine, subtle natural imperfections, no airbrushing, no porcelain or waxy skin. Very minimal makeup: clean matte skin, softly defined brows, neutral nude lips, no blush or glitter. Hair pulled back sleek and tight away from the face, with a clean center part.
-OUTFIT
-An asymmetrical couture top in real silver metallic silk satin, worn over a fitted black fine-knit turtleneck. NOT a standard blazer: no notch or peak lapels, no collar.
-- Fabric: satin with broad soft gradients from light silver to dark grey, a restrained sheen, not mirror or chrome. Real details: subtle creases at the elbows and underarms, fine stitching along the seams, a visible lining edge along the V opening.
-- Fitted cropped long-sleeved jacket ending at the waistband. Shoulders cleanly squared, crisp and sharp, lightly structured, no oversized pads, no exaggerated pointed shoulders.
-- Very deep narrow V opening down the center to the waistband, showing the black turtleneck.
-- Viewer's right side: one large smooth silver panel with no lapel or collar, starting at the right shoulder and sweeping diagonally across the chest. Its lower edge forms a clean curve overlapping the torso, with a soft shadow underneath. The right sleeve is lighter silver.
-- Viewer's left side: a narrow, darker gunmetal-charcoal panel folded back along the V opening, with a thin silver-white piping along the edge. The left sleeve is darker gunmetal satin.
-- One wide, structured silver-grey waistband (cummerbund style) at the natural waist, with a crisp top edge.
-Mostly silver and gunmetal, with black only in the turtleneck. No extra belts or layers.
-BODY PROPORTIONS
-Realistic adult female fashion-model proportions: natural head size (about 1/7.5 of body height), long natural neck, shoulder width about 1.8 to 2 head-widths including the jacket, balanced long torso, waistband at the natural waist.
-LIGHTING
-Large diffused softbox key light from the front-left, soft fill from the right, gentle realistic shadow falloff, subtle ambient bounce from the studio. Soft contrast, realistic skin tones. The metallic fabric reflects the room softly and picks up a faint color cast from the surroundings.
-BACKGROUND & OUTPUT
-Completely remove the original background. Generate a clean cutout with a fully transparent background and true alpha channel. No background, gradients, environmental elements, or cast shadows.
-Output a high-resolution vertical PNG with a 3:4 aspect ratio.
-STRICT PRIORITIES
-1. Preserve the exact identity from the uploaded photo.
-2. Natural beauty retouching without changing identity.
-3. Randomized black-and-silver futuristic high-fashion womenswear that stays elegant and not strange.
-4. Randomized pose that feels natural, stylish, and editorial.
-5. Fully transparent background.
-The final result must look like an authentic luxury fashion campaign portrait, not an AI-generated illustration.
-NEGATIVE PROMPT
-3D render, CGI, plastic, doll, mannequin, airbrushed, overly smooth skin, porcelain skin, waxy skin, beauty filter, symmetrical perfect face, uniform glossy sheen, mirror chrome, liquid metal, vinyl, latex, leather, blown-out highlights, perfect wrinkle-free fabric, illustration, AI look, blazer, notch lapel, peak lapel, collar, oversized shoulder pads, skirt, lower body, extra belts, oversized head, tiny waist, long neck, wide-angle distortion, blurry, low resolution`,
   `Use the uploaded user photo as the ONLY identity reference. Transform the person into a high-end futuristic fashion portrait while preserving her exact facial identity.
 FACE & IDENTITY
 Preserve the person's original facial features, face shape, eyes, nose, lips, jawline, hairstyle, hair color, and recognizable identity. No face blending or identity alteration. Regardless of the original photo angle, generate a natural front-facing or slightly angled fashion portrait with clear facial visibility, direct or near-direct eye contact, and a subtle confident expression.
