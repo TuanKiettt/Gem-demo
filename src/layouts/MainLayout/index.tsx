@@ -13,7 +13,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           src="/BackGround.png"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
         />
 
         <main className="relative z-10 h-full w-full">
