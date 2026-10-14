@@ -7,7 +7,7 @@
       name="description"
       content="Trải nghiệm công nghệ tạo thiệp mời AI từ INVITATION.VN cho sự kiện FUTURE BANQUET EXPERIENCE diễn ra tại GEM CENTER."
     />
-    <title> THIỆP MỜI AI - FUTURE BANQUET EXPERIENCE</title>
+    <title>THIỆP MỜI AI - FUTURE BANQUET EXPERIENCE</title>
     <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,5 +20,43 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function detectFacebookBrowser() {
+        const isFacebookApp = () => {
+          const ua = navigator.userAgent || navigator.vendor;
+          return (
+            ua.indexOf("FBAN") > -1 ||
+            ua.indexOf("FBAV") > -1 ||
+            ua.indexOf("FB_IAB") > -1
+          );
+        };
+
+        const isZaloApp = () => {
+          const ua = navigator.userAgent || navigator.vendor;
+          return ua.indexOf("Zalo") > -1;
+        };
+
+        const fullPath = `${window.location.pathname}${window.location.hash}`;
+
+        if (isFacebookApp()) {
+          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+          if (isIOS) {
+            window.location.href = `x-safari-${window.location.protocol}//${window.location.host}${fullPath}`;
+          } else {
+            window.location.href = `intent://${window.location.host}${fullPath}#Intent;scheme=https;end`;
+          }
+        }
+
+        if (isZaloApp()) {
+          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+          if (isIOS) {
+            window.location.href = `x-safari-${window.location.protocol}//${window.location.host}${fullPath}`;
+          } else {
+            window.location.href = `intent://${window.location.host}${fullPath}#Intent;scheme=https;end`;
+          }
+        }
+      })();
+    </script>
   </body>
 </html>

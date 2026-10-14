@@ -30,7 +30,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         {/* 3. Partner logos */}
         <div className="flex w-full items-center justify-center py-[1dvh]">
           <img
-            src="/logoSponsor.png"
+            src="/LogoSponsor.png"
             alt="GEM Center partners"
             className=" absolute bottom-[15%] h-auto w-full object-contain max-h-[12dvh]"
           />
