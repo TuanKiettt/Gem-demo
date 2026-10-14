@@ -382,7 +382,7 @@ export async function generateInvitation(
             SourceImageUrl: uploadedImageUrl,
             TargetImageUrl: "",
             InviteTime: experienceTime,
-            Prompt: `${generationPrompt}\n\nVIDEO DISPLAY REQUIREMENT: Display the selected experience time exactly as "${experienceTime}" as a prominent, large, clearly readable on-screen title. Use elegant high-contrast typography and place it within the lower third with comfortable spacing from the edges. Do not render it as tiny text, fine print, or a small subtitle. Do not display a different time.`,
+            Prompt: generationPrompt,
           },
         },
       });
