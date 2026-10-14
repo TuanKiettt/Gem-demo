@@ -39,12 +39,10 @@ export function StepFormCard({
     try {
       return { data: readRegistrationData(), error: "" };
     } catch (error) {
+      console.error("Không thể đọc thông tin đăng ký:", error);
       return {
         data: null,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Không thể đọc thông tin đăng ký.",
+        error: "Không thể đọc thông tin đăng ký đã lưu. Vui lòng đăng ký lại.",
       };
     }
   });
@@ -79,9 +77,7 @@ export function StepFormCard({
       onGenerationError();
 
       setGenerationError(
-        error instanceof Error
-          ? error.message
-          : "Không thể tạo thiệp bằng AI. Vui lòng thử lại.",
+        "Không thể tạo thiệp lúc này. Vui lòng kiểm tra kết nối và thử lại sau.",
       );
     } finally {
       setGenerationLoading(false);

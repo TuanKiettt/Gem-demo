@@ -28,6 +28,7 @@ const getVideoMimeType = (url: string): string | null => {
 export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
+  const [videoError, setVideoError] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const [videoSize, setVideoSize] = useState<VideoSize | null>(null);
   const [videoAspectRatio, setVideoAspectRatio] =
@@ -118,11 +119,7 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
       window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
     } catch (error) {
       console.error("Không thể tải video thiệp:", error);
-      setDownloadError(
-        error instanceof Error
-          ? error.message
-          : "Không thể tải video thiệp. Vui lòng thử lại.",
-      );
+      setDownloadError("Không thể tải video thiệp. Vui lòng thử lại sau.");
     } finally {
       setDownloading(false);
     }
@@ -160,6 +157,12 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
               : undefined
           }
           aria-label="Video thiệp được tạo bằng AI"
+          onError={() => {
+            console.error(
+              "Không thể phát video thiệp, vui lòng thử lại.",
+            );
+            setVideoError(true);
+          }}
         >
           <source src={generatedMediaUrl} type={videoMimeType} />
           Trình duyệt của bạn không hỗ trợ phát video.
@@ -182,12 +185,24 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
           {downloadError}
         </p>
       )}
-      {hasPlayed && (
+      {videoError && (
+        <p
+          role="alert"
+          className="absolute bottom-24 z-10 w-[min(90vw,32rem)] rounded-xl bg-red-950/85 px-4 py-3 text-center text-sm text-white"
+        >
+          Không thể phát video thiệp. Vui lòng thử lại.
+        </p>
+      )}
+      {(hasPlayed ||
+        videoError ||
+        Boolean(downloadError) ||
+        !generatedMediaUrl ||
+        !videoMimeType) && (
         <div
           ref={controlsRef}
           className="relative z-10 flex w-[min(100%,17.5rem)] flex-col gap-3"
         >
-          {videoMimeType && (
+          {hasPlayed && videoMimeType && (
             <button
               type="button"
               onClick={handleDownload}
@@ -208,15 +223,20 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
               LƯU THIỆP MỜI
             </button>
           )}
-          <button
-            type="button"
-            onClick={onReset}
-            disabled={downloading}
-            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-5 text-sm font-bold tracking-wide text-[#E5A447] transition hover:bg-white/10 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-            TẠO THIỆP KHÁC
-          </button>
+          {(videoError ||
+            Boolean(downloadError) ||
+            !generatedMediaUrl ||
+            !videoMimeType) && (
+            <button
+              type="button"
+              onClick={onReset}
+              disabled={downloading}
+              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-5 text-sm font-bold tracking-wide text-[#E5A447] transition hover:bg-white/10 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              TẠO THIỆP KHÁC
+            </button>
+          )}
         </div>
       )}
     </section>

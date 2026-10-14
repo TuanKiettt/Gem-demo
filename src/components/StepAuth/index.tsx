@@ -130,9 +130,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
     } catch (registrationError) {
       console.error("Không thể đăng ký người tham dự:", registrationError);
       setRegistrationError(
-        registrationError instanceof Error
-          ? registrationError.message
-          : "Không thể đăng ký. Vui lòng thử lại.",
+        "Không thể hoàn tất đăng ký. Vui lòng kiểm tra email, số điện thoại và thử lại.",
       );
     }
   };
@@ -350,7 +348,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
             type="submit"
             disabled={!gender || !time || isSubmitting}
             className={`
-              mx-auto mt-0 w-[min(100%,17.5rem)]
+              mx-auto mt-5 w-[min(100%,17.5rem)]
               rounded-full border border-[#FFF5EA]/80
               px-5 py-3 text-sm font-bold tracking-wide
               text-[#160D08] shadow-lg

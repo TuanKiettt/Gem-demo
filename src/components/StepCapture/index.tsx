@@ -209,11 +209,7 @@ export function StepCapture({
       onNext();
     } catch (uploadError) {
       console.error("Không thể tải ảnh lên Supabase Storage:", uploadError);
-      setError(
-        uploadError instanceof Error
-          ? uploadError.message
-          : "Không thể tải ảnh lên. Vui lòng thử lại.",
-      );
+      setError("Không thể tải ảnh lên. Vui lòng kiểm tra kết nối và thử lại.");
     } finally {
       setUploading(false);
     }
