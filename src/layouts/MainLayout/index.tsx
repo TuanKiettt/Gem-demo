@@ -8,7 +8,7 @@ interface MainLayoutProps {
 export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex min-h-dvh w-full justify-center bg-[#030817]">
-      <div className="relative isolate h-dvh min-h-125 w-full max-w-[26.875rem] overflow-hidden bg-[#030817] shadow-2xl ring-1 ring-white/10">
+      <div className="relative isolate h-dvh min-h-125 w-full max-w-107.5 overflow-hidden bg-[#030817] shadow-2xl ring-1 ring-white/10">
         <img
           src="/BackGround.png"
           alt=""

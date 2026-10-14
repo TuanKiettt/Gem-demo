@@ -482,11 +482,8 @@ export function StepCapture({
             type="button"
             onClick={() => void handleContinue()}
             disabled={!photo || uploading || Boolean(cropSource)}
-            className="w-[min(100%,17.5rem)] rounded-full border border-[#FFF5EA]/80 px-5 py-3 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-            style={{
-              background:
-                "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
-            }}
+            className="w-[min(100%,17.5rem)] rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-5 py-3 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+
           >
             {uploading ? "ĐANG TẢI ẢNH..." : "TIẾP TỤC"}
           </button>
@@ -566,11 +563,7 @@ export function StepCapture({
               <button
                 type="button"
                 onClick={() => void applyCrop()}
-                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#FFF5EA]/80 px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                style={{
-                  background:
-                    "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
-                }}
+                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <Check aria-hidden="true" className="h-5 w-5" />
                 CẮT ẢNH

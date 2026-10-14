@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 
 interface LoadingPageProps {
   progress?: number | null;
@@ -5,15 +6,41 @@ interface LoadingPageProps {
   subtitle?: string;
 }
 
+const AI_LOADING_SCRIPT = [
+"Đang phân tích hình ảnh của bạn...",
+"AI đang nhận diện các chi tiết trong ảnh...",
+"Đang phân tích khuôn mặt, bố cục và ánh sáng...",
+"AI đang thay đổi trang phục theo yêu cầu...",
+"Đang tinh chỉnh kiểu dáng và chất liệu trang phục...",
+"Đang hoàn thiện diện mạo mới của bạn...",
+"AI đang tạo hình ảnh mới cho bạn...",
+"Đang tinh chỉnh chi tiết để hình ảnh tự nhiên hơn...",
+"Đang tối ưu chất lượng và độ sắc nét hình ảnh...",
+"Một chút nữa thôi, diện mạo mới sắp xuất hiện...",
+"AI đang hoàn thiện những chi tiết cuối cùng...",
+"Sắp xong rồi! Cùng chờ xem diện mạo mới của bạn nhé...",
+]
+
 export default function LoadingPage({
   progress,
   title = "ĐANG TẠO THIỆP MỜI",
   subtitle = "Vũ trụ đang chuẩn bị một điều bất ngờ...",
 }: LoadingPageProps) {
+  const [scriptIndex, setScriptIndex] = useState(0);
   const hasProgress = typeof progress === "number";
   const value = hasProgress
     ? Math.round(Math.max(0, Math.min(100, progress)))
     : null;
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setScriptIndex((currentIndex) =>
+        Math.min(currentIndex + 1, AI_LOADING_SCRIPT.length - 1),
+      );
+    }, 2000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-linear-to-b from-[#08132f]/80 via-[#0b1839]/75 to-[#123b91]/85 px-5">
@@ -67,7 +94,7 @@ export default function LoadingPage({
 
         {/* Percentage */}
         <p className="mt-4 text-center text-sm font-bold tabular-nums text-[#e9ad62]">
-          "Đang cập nhật tiến trình..."
+          {AI_LOADING_SCRIPT[scriptIndex]}
         </p>
       </section>
     </div>

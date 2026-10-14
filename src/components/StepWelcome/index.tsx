@@ -4,52 +4,56 @@ interface StepWelcomeProps {
 
 export function StepWelcome({ onNext }: StepWelcomeProps) {
   return (
-      <div
-        className="
+    <div
+      className="
           relative z-10 mx-auto grid h-full w-full max-w-125 justify-items-center px-[5%] py-[1.5dvh]
         "
-      >
-        {/* 1. GEM logo */}
-        <div className="flex min-h-0 items-center justify-center w-full">
-          <img
-            src="/LogoGEM-02-1.png"
-            alt="GEM Center"
-            className=" absolute top-[4.5%] max-w-[45%] object-contain max-h-[10dvh]"
-          />
-        </div>
+    >
+      {/* 1. GEM logo */}
+      <div className="relative flex min-h-0 w-full flex-row">
+        {/* Logo góc trái trên */}
+        <img
+          src="/LogoGEM-02-1.png"
+          alt="GEM Center"
+          className="absolute top-[4.5%] left-[6%%] max-w-[45%] object-contain max-h-[10dvh]"
+        />
 
-        {/* 2. Tagline: vùng giữa background */}
-        <div className="flex min-h-0 w-full items-center justify-center">
-          <img
-            src="/Tagline.png"
-            alt="Future Banquet Experience"
-            className=" absolute top-[47%] object-contain max-h-[24dvh] -translate-x-2.5"
-          />
-        </div>
+        {/* Logo góc phải trên */}
+        <img
+          src="/invitation-logo.png"
+          alt="Invitation Logo"
+          className="absolute top-[4.5%] right-[2%] max-w-[45%] object-contain max-h-[6dvh]"
+        />
+      </div>
 
-        {/* 3. Partner logos */}
-        <div className="flex w-full items-center justify-center py-[1dvh]">
-          <img
-            src="/LogoSponsor.png"
-            alt="GEM Center partners"
-            className=" absolute bottom-[15%] h-auto w-full object-contain max-h-[12dvh]"
-          />
-        </div>
+      {/* 2. Tagline: vùng giữa background */}
+      <div className="flex min-h-0 w-full items-center justify-center">
+        <img
+          src="/Tagline.png"
+          alt="Future Banquet Experience"
+          className=" absolute top-[47%] object-contain max-h-[24dvh] -translate-x-2.5"
+        />
+      </div>
 
-        {/* 4. Explore button */}
-        <div className="flex w-full items-center justify-center py-[1.5dvh]">
-          <button
-            type="button"
-            onClick={onNext}
-            className="w-[min(78%,17.5rem)] shrink-0 rounded-full border border-[#FFF5EA]/70 px-4 py-3 font-bold transition-transform duration-200 active:scale-95 focus-visible:outline focus-visible:outline-[#DEBD99] absolute bottom-[5%]"
-            style={{
-              background:
-                "linear-gradient(#9B5931 0%, #DEBD99 35%, #DBB890 70%, #965B36 100%)",
-            }}
-          >
-            Khám Phá Trải Nghiệm
-          </button>
-        </div>
+      {/* 3. Partner logos */}
+      <div className="flex w-full items-center justify-center py-[1dvh]">
+        <img
+          src="/LogoSponsor.png"
+          alt="GEM Center partners"
+          className=" absolute bottom-[15%] h-auto w-full object-contain max-h-[12dvh]"
+        />
+      </div>
+
+      {/* 4. Explore button */}
+      <div className="flex w-full items-center justify-center py-[1.5dvh]">
+        <button
+          type="button"
+          onClick={onNext}
+          className="w-[min(78%,17.5rem)] shrink-0 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40]  px-4 py-3 font-bold transition-transform duration-200 active:scale-95 focus-visible:outline focus-visible:outline-[#DEBD99] absolute bottom-[5%]"
+        >
+          Khám Phá Trải Nghiệm
+        </button>
+      </div>
     </div>
   );
 }
