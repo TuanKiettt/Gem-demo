@@ -142,7 +142,6 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
         <video
           ref={videoRef}
           autoPlay
-          muted
           playsInline
           preload="auto"
           onEnded={(event) => handleVideoEnded(event.currentTarget)}
