@@ -193,11 +193,6 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
           Không thể phát video thiệp. Vui lòng thử lại.
         </p>
       )}
-      {(hasPlayed ||
-        videoError ||
-        Boolean(downloadError) ||
-        !generatedMediaUrl ||
-        !videoMimeType) && (
         <div
           ref={controlsRef}
           className="relative z-10 flex w-[min(100%,17.5rem)] flex-col gap-3"
@@ -206,11 +201,7 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
             <button
               type="button"
               onClick={handleDownload}
-              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#FFF5EA]/80 px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              style={{
-                background:
-                  "linear-gradient(180deg, #FFF0D9 0%, #D8B18D 25%, #A66D49 75%, #E7C5A2 100%)",
-              }}
+              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#fff0ce] bg-linear-to-r from-[#a96b3f] via-[#f3d2a0] to-[#a66a40] px-5 text-sm font-bold tracking-wide text-[#160D08] shadow-lg transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {downloading ? (
                 <LoaderCircle
@@ -222,23 +213,18 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
               )}
               LƯU THIỆP MỜI
             </button>
-          )}
-          {(videoError ||
-            Boolean(downloadError) ||
-            !generatedMediaUrl ||
-            !videoMimeType) && (
+          )} {hasPlayed && videoMimeType && (
             <button
               type="button"
               onClick={onReset}
               disabled={downloading}
-              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-5 text-sm font-bold tracking-wide text-[#E5A447] transition hover:bg-white/10 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="uppercase flex min-h-14 w-full items-center justify-center gap-2 rounded-full border border-[#D9A44F] bg-[#111D48]/80 px-5 text-sm font-bold tracking-wide text-[#E5A447] transition hover:bg-white/10 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               <RotateCcw className="h-4 w-4" aria-hidden="true" />
-              TẠO THIỆP KHÁC
+              Tạo lại thiệp mời
             </button>
           )}
         </div>
-      )}
     </section>
   );
 }

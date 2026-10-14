@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import Cookies from "js-cookie";
 import gsap from "gsap";
 import type { Session } from "@supabase/supabase-js";
 import { MainLayout } from "./layouts/MainLayout";
@@ -14,6 +13,7 @@ import {
   waitForInvitationGeneration,
   type InvitationGenerationProgress,
 } from "./api/invitation";
+import { REGISTRATION_STORAGE_KEY } from "./lib/registration";
 
 type WorkflowStep = 0 | 1 | 2 | 3 | 4;
 type PhotoSource = "upload" | "camera";
@@ -160,18 +160,22 @@ function App() {
   };
 
   const reset = () => {
-    setStep(0);
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
-    setPreview(null);
-    setUploadedImageUrl(null);
-    setPhotoSource(null);
-    setGeneratedMediaUrl(null);
-    localStorage.removeItem(GENERATED_MEDIA_STORAGE_KEY);
-    localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
-    Cookies.remove("uploadedAvatar", { path: "" });
-    Cookies.remove("uploadedAvatar", { path: "/" });
-    localStorage.removeItem("uploadedAvatar");
-    sessionStorage.removeItem("uploadedAvatar");
+
+    const storageKeys = Array.from(
+      { length: localStorage.length },
+      (_, index) => localStorage.key(index),
+    );
+    for (const key of storageKeys) {
+      if (
+        key &&
+        key !== REGISTRATION_STORAGE_KEY &&
+        !/^sb-.+-auth-token$/.test(key)
+      ) {
+        localStorage.removeItem(key);
+      }
+    }
+    sessionStorage.clear();
     window.location.reload();
   };
 

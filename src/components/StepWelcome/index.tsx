@@ -47,6 +47,14 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
           Khám Phá Trải Nghiệm
         </button>
       </div>
+      <div className="absolute inset-x-0 bottom-0 z-5 flex items-center justify-center gap-1.5 text-[0.5rem] leading-none text-white/80">
+        <span>Managed by</span>
+        <img
+          src="/invitation-logo.png"
+          alt="Invitation"
+          className="h-[min(4dvh,1.5rem)] max-w-[45%] object-contain"
+        />
+      </div>
     </div>
   );
 }

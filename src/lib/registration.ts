@@ -8,7 +8,7 @@ export interface RegistrationData {
   experienceTime: string;
 }
 
-const REGISTRATION_STORAGE_KEY = "gem-demo.registration.v1";
+export const REGISTRATION_STORAGE_KEY = "gem-demo.registration.v1";
 
 export function normalizePhone(input: string): string {
   const digits = input.replace(/\D/g, "");
