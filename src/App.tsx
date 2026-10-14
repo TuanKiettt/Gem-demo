@@ -27,11 +27,15 @@ function App() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const previousStepRef = useRef<WorkflowStep>(0);
   const isTransitioningRef = useRef(false);
-  const [step, setStep] = useState<WorkflowStep>(0);
+  const [generatedMediaUrl, setGeneratedMediaUrl] = useState<string | null>(
+    () => localStorage.getItem(GENERATED_MEDIA_STORAGE_KEY),
+  );
+  const [step, setStep] = useState<WorkflowStep>(() =>
+    generatedMediaUrl ? 4 : 0,
+  );
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [photoSource, setPhotoSource] = useState<PhotoSource | null>(null);
-  const [generatedMediaUrl, setGeneratedMediaUrl] = useState<string | null>(null);
   const [resumeServiceId] = useState(() =>
     localStorage.getItem(PENDING_GENERATION_STORAGE_KEY),
   );
@@ -44,10 +48,6 @@ function App() {
       progress: null,
       message: "Đang gửi yêu cầu tạo thiệp đến AI...",
     });
-
-  useEffect(() => {
-    localStorage.removeItem(GENERATED_MEDIA_STORAGE_KEY);
-  }, []);
 
   const handleSessionChange = useCallback((nextSession: Session | null) => {
     if (nextSession) {
@@ -82,6 +82,7 @@ function App() {
       .then((mediaUrl) => {
         if (!active) return;
         localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
+        localStorage.setItem(GENERATED_MEDIA_STORAGE_KEY, mediaUrl);
         setGeneratedMediaUrl(mediaUrl);
         setGenerationActive(false);
         setStep(4);
@@ -217,6 +218,7 @@ function App() {
             uploadedImageUrl={uploadedImageUrl}
             onGenerated={(url) => {
               localStorage.removeItem(PENDING_GENERATION_STORAGE_KEY);
+              localStorage.setItem(GENERATED_MEDIA_STORAGE_KEY, url);
               setGeneratedMediaUrl(url);
               setGenerationActive(false);
               setGenerationResumeError("");

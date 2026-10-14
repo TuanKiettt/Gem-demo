@@ -34,6 +34,7 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
     useState<VideoAspectRatio | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const videoMimeType = generatedMediaUrl
     ? getVideoMimeType(generatedMediaUrl)
     : null;
@@ -91,9 +92,10 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
     setHasPlayed(true);
     video.currentTime = 0;
     void video.play().catch((error: unknown) => {
-      console.error("Không thể tiếp tục phát video thiệp:", error);
+      console.error("Không thể tự động phát lại video thiệp:", error);
     });
   };
+
 
   const handleDownload = async () => {
     if (!generatedMediaUrl) return;
@@ -141,6 +143,7 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
       )}
       {generatedMediaUrl && videoMimeType ? (
         <video
+          ref={videoRef}
           autoPlay
           muted
           playsInline
@@ -149,7 +152,7 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
           className={`${
             hasPlayed
               ? "relative z-10 rounded-sm bg-black object-cover shadow-2xl"
-              : "absolute inset-0 h-full w-full object-contain"
+              : "absolute inset-0 h-full w-full bg-black object-contain"
           }`}
           style={
             hasPlayed && videoSize

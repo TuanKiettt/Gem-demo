@@ -290,7 +290,7 @@ export function StepCapture({
 
       {/* Main content */}
       <section
-        className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-6 pt-5 ${
+        className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-20 pt-6 ${
           cropSource ? "hidden" : ""
         }`}
       >
@@ -477,7 +477,7 @@ export function StepCapture({
         )}
 
         {/* Continue button */}
-        <div className="mt-6 flex shrink-0 justify-center">
+        <div className="mt-3 flex shrink-0 justify-center">
           <button
             type="button"
             onClick={() => void handleContinue()}

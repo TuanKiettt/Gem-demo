@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { selectGenerationPrompt } from "./generationPrompts";
 
 interface GenerateInvitationArgs {
   fullName: string;
@@ -34,9 +35,6 @@ const FAILURE_STATUSES = new Set([
   "cancelled",
   "canceled",
 ]);
-const GENERATION_PROMPT =
-"Use the uploaded user photo as the ONLY identity reference. Transform the person into a high-end futuristic fashion portrait while preserving her exact facial identity. FACE & IDENTITY Preserve the person’s original facial features, face shape, eyes, nose, lips, jawline, hairstyle, hair color, and recognizable identity. No face blending or identity alteration. Regardless of the original photo angle, generate a natural front-facing or slightly angled fashion portrait with clear facial visibility, direct or near-direct eye contact, and a subtle confident expression. Apply subtle professional makeup and refined beauty retouching. Conceal blemishes, dark circles, and uneven skin tone. Create smoother, healthier-looking skin while preserving realistic skin texture and natural facial details. Enhance the overall look with a polished, elegant, editorial beauty finish without making the face look artificial or overly beautified. FASHION & OUTFIT Generate a unique, randomized high-fashion womenswear outfit with a luxurious black-and-silver editorial aesthetic. The outfit should feel modern, stylish, sleek, feminine, premium, and slightly futuristic. Use black and metallic silver as the dominant palette. Allow creative variation in the clothing design for each generation, as long as the overall mood and tone remain sophisticated, fashionable, and luxury editorial. The outfit may include elegant tailoring, soft futuristic structure, subtle metallic details, clean lines, or refined sculptural elements. It should feel wearable and fashion-forward, not bizarre, costume-like, theatrical, or overly sci-fi. BODY & POSE Generate a half-body fashion portrait framed from the top of the head to the waist or upper hips. If the uploaded photo only shows the face, naturally reconstruct the body with realistic anatomy and balanced proportions. Allow a randomized fashion pose that feels natural, elegant, and editorial. The pose may be front-facing or slightly angled, with relaxed shoulders, a confident posture, and subtle model-like attitude. Keep the pose visually appealing and premium, but not exaggerated, awkward, or unusual. Maintain a slim, elegant, well-proportioned feminine silhouette. Keep the person centered in the frame with enough space around the head and shoulders. LIGHTING & QUALITY Professional luxury fashion editorial photography, soft cinematic studio lighting, refined contrast, realistic skin tones, premium fabric and metallic textures, sharp facial details, and photorealistic DSLR image quality. BACKGROUND & OUTPUT Completely remove the original background. Generate a clean cutout with a fully transparent background and true alpha channel. No background, gradients, environmental elements, or cast shadows. Output a high-resolution vertical PNG with a 3:4 aspect ratio. STRICT PRIORITIES 1. Preserve the exact identity from the uploaded photo. 2. Natural beauty retouching without changing identity. 3. Randomized black-and-silver futuristic high-fashion womenswear that stays elegant and not strange. 4. Randomized pose that feels natural, stylish, and editorial. 5. Fully transparent background. The final result must look like an authentic luxury fashion campaign portrait, not an AI-generated illustration."
-
 type JsonObject = Record<string, unknown>;
 
 const logAiError = (
@@ -365,6 +363,7 @@ export async function generateInvitation(
   }
 
   try {
+    const generationPrompt = selectGenerationPrompt(gender);
     stage = "creating AI service";
     onProgress?.({
       progress: null,
@@ -383,7 +382,7 @@ export async function generateInvitation(
             SourceImageUrl: uploadedImageUrl,
             TargetImageUrl: "",
             InviteTime: experienceTime,
-            Prompt: GENERATION_PROMPT,
+            Prompt: `${generationPrompt}\n\nVIDEO DISPLAY REQUIREMENT: Display the selected experience time exactly as "${experienceTime}" as a prominent, large, clearly readable on-screen title. Use elegant high-contrast typography and place it within the lower third with comfortable spacing from the edges. Do not render it as tiny text, fine print, or a small subtitle. Do not display a different time.`,
           },
         },
       });
