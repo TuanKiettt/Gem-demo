@@ -77,7 +77,9 @@ export function StepFormCard({
       onGenerationError();
 
       setGenerationError(
-        "Không thể tạo thiệp lúc này. Vui lòng kiểm tra kết nối và thử lại sau.",
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : "Không thể tạo thiệp lúc này. Vui lòng kiểm tra kết nối và thử lại sau.",
       );
     } finally {
       setGenerationLoading(false);

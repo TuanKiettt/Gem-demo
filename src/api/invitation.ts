@@ -11,6 +11,7 @@ interface GenerateInvitationArgs {
 interface ServiceRecord {
   status: string;
   response?: unknown;
+  data?: unknown;
 }
 
 export interface InvitationGenerationProgress {
@@ -61,9 +62,13 @@ const parseResponse = (text: string): unknown => {
 };
 
 const getErrorMessage = (value: unknown, fallback: string): string => {
-  if (typeof value === "string" && value.trim()) return value;
-  if (isObject(value) && typeof value.error === "string") return value.error;
-  if (isObject(value) && typeof value.message === "string") return value.message;
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (isObject(value)) {
+    for (const field of ["error", "message", "data"]) {
+      const message = getErrorMessage(value[field], "");
+      if (message) return message;
+    }
+  }
   return fallback;
 };
 
@@ -89,6 +94,7 @@ const findServiceRecord = (value: unknown): ServiceRecord | null => {
       return {
         status: object.status,
         response: object.response,
+        data: object.data,
       };
     }
   }
@@ -275,7 +281,10 @@ export const waitForInvitationGeneration = (
         });
         complete(
           new Error(
-            getErrorMessage(record.response, "Dịch vụ AI xử lý ảnh thất bại."),
+            getErrorMessage(
+              record.response,
+              getErrorMessage(record.data, "Dịch vụ AI xử lý ảnh thất bại."),
+            ),
           ),
         );
         return;

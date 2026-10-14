@@ -1,5 +1,11 @@
-import { useLayoutEffect, useRef, useState } from "react";
-import { ArrowDown, LoaderCircle, RotateCcw } from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  ArrowDown,
+  LoaderCircle,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 
 interface StepResultProps {
   generatedMediaUrl: string | null;
@@ -29,6 +35,8 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
   const [videoError, setVideoError] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnableError, setAudioEnableError] = useState("");
   const [hasPlayed, setHasPlayed] = useState(false);
   const [videoSize, setVideoSize] = useState<VideoSize | null>(null);
   const [videoAspectRatio, setVideoAspectRatio] =
@@ -39,6 +47,42 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
   const videoMimeType = generatedMediaUrl
     ? getVideoMimeType(generatedMediaUrl)
     : null;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let active = true;
+    void video.play().catch((error: unknown) => {
+      if (!active) return;
+      console.warn("Trình duyệt không tự động phát được video thiệp:", error);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [generatedMediaUrl]);
+
+  const handleToggleAudio = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setAudioEnableError("");
+    const nextAudioEnabled = !audioEnabled;
+    video.muted = !nextAudioEnabled;
+    setAudioEnabled(nextAudioEnabled);
+
+    if (!nextAudioEnabled) return;
+
+    void video.play().catch(
+      (error: unknown) => {
+        console.error("Không thể phát video thiệp có tiếng:", error);
+        video.muted = true;
+        setAudioEnabled(false);
+        setAudioEnableError("Không thể bật âm thanh. Vui lòng thử lại.");
+      },
+    );
+  };
 
   useLayoutEffect(() => {
     if (!hasPlayed || !videoAspectRatio) return;
@@ -90,6 +134,8 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
         height: video.videoHeight,
       });
     }
+    video.muted = false;
+    setAudioEnabled(true);
     setHasPlayed(true);
     video.currentTime = 0;
     void video.play().catch((error: unknown) => {
@@ -139,39 +185,74 @@ export function StepResult({ generatedMediaUrl, onReset }: StepResultProps) {
         />
       )}
       {generatedMediaUrl && videoMimeType ? (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          preload="auto"
-          onEnded={(event) => handleVideoEnded(event.currentTarget)}
+        <div
           className={`${
             hasPlayed
-              ? "relative z-10 rounded-sm bg-black object-cover shadow-2xl"
-              : "absolute inset-0 h-full w-full bg-black object-contain"
+              ? "relative z-10 overflow-hidden rounded-sm bg-black shadow-2xl"
+              : "absolute inset-0"
           }`}
           style={
-            hasPlayed && videoSize
-              ? { width: videoSize.width, height: videoSize.height }
+            hasPlayed && videoAspectRatio
+              ? {
+                  width: videoSize?.width ?? videoAspectRatio.width,
+                  height: videoSize?.height ?? videoAspectRatio.height,
+                }
               : undefined
           }
-          aria-label="Video thiệp được tạo bằng AI"
-          onError={() => {
-            console.error(
-              "Không thể phát video thiệp, vui lòng thử lại.",
-            );
-            setVideoError(true);
-          }}
         >
-          <source src={generatedMediaUrl} type={videoMimeType} />
-          Trình duyệt của bạn không hỗ trợ phát video.
-        </video>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted={!audioEnabled}
+            playsInline
+            preload="auto"
+            onEnded={(event) => handleVideoEnded(event.currentTarget)}
+            className={`h-full w-full bg-black ${
+              hasPlayed ? "object-cover" : "object-contain"
+            }`}
+            aria-label="Video thiệp được tạo bằng AI"
+            onError={() => {
+              console.error(
+                "Không thể phát video thiệp, vui lòng thử lại.",
+              );
+              setVideoError(true);
+            }}
+          >
+            <source src={generatedMediaUrl} type={videoMimeType} />
+            Trình duyệt của bạn không hỗ trợ phát video.
+          </video>
+          {!hasPlayed && !videoError && (
+            <button
+              type="button"
+              onClick={handleToggleAudio}
+              aria-label={
+                audioEnabled ? "Tắt âm thanh video" : "Bật âm thanh video"
+              }
+              aria-pressed={audioEnabled}
+              className="absolute right-3 top-3 z-20 flex h-11 w-11 items-center justify-center text-white transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {audioEnabled ? (
+                <Volume2 className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <VolumeX className="h-5 w-5" aria-hidden="true" />
+              )}
+            </button>
+          )}
+        </div>
       ) : (
         <p
           role="alert"
           className="absolute inset-0 flex items-center justify-center px-6 text-center text-white"
         >
           Không tìm thấy video thiệp đã tạo. Vui lòng thử lại.
+        </p>
+      )}
+      {audioEnableError && (
+        <p
+          role="alert"
+          className="absolute left-1/2 top-16 z-20 -translate-x-1/2 rounded-lg bg-red-950/85 px-3 py-2 text-center text-xs text-white"
+        >
+          {audioEnableError}
         </p>
       )}
       {downloadError && (
