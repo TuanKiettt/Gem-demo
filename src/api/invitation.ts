@@ -215,11 +215,11 @@ export const waitForInvitationGeneration = (
         serviceId: id,
         timeoutMs: GENERATION_TIMEOUT_MS,
       });
-      // complete(
-      //   new Error(
-      //     "Đã chờ AI quá thời gian cho phép. Hãy kiểm tra workflow AI và việc gọi private/update_service.",
-      //   ),
-      // );
+      complete(
+        new Error(
+          "Hệ thống tạo thiệp đang có nhiều yêu cầu xử lý,  bạn vui lòng thử lại sau 15 phút nữa nhé.",
+        ),
+      );
     }, GENERATION_TIMEOUT_MS);
 
     const cleanup = () => {
