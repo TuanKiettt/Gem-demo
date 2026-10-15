@@ -11,6 +11,7 @@ import {
   type RegisterFormData,
   type RegisterFormInput,
 } from "../../schema/authSchema";
+import { sendToGoogleSheet } from "../../api/sendToGoogleSheetData";
 
 interface SignupAvailability {
   email_taken: boolean;
@@ -59,9 +60,10 @@ export function StepAuth({ onNext }: StepAuthProps) {
     setRegistrationError("");
 
     try {
-      const { data: availabilityData, error: availabilityError } = await supabase
-        .rpc("check_signup_available", { p_email: email, p_phone: phone })
-        .single();
+      const { data: availabilityData, error: availabilityError } =
+        await supabase
+          .rpc("check_signup_available", { p_email: email, p_phone: phone })
+          .single();
 
       if (availabilityError) throw availabilityError;
       if (!isSignupAvailability(availabilityData)) {
@@ -116,8 +118,10 @@ export function StepAuth({ onNext }: StepAuthProps) {
       }
 
       if (!data.session) {
-        const { error: signInError } =
-          await supabase.auth.signInWithPassword({ email, password });
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
         if (signInError) {
           throw new Error(
             "Tài khoản đã được tạo nhưng chưa thể đăng nhập tự động. Hãy tắt yêu cầu xác nhận email trong Supabase Auth rồi thử lại.",
@@ -126,6 +130,7 @@ export function StepAuth({ onNext }: StepAuthProps) {
       }
 
       saveRegistrationData(registration);
+      sendToGoogleSheet(registration);
       onNext();
     } catch (registrationError) {
       console.error("Không thể đăng ký người tham dự:", registrationError);
@@ -292,26 +297,25 @@ export function StepAuth({ onNext }: StepAuthProps) {
 
           {/* Experience time */}
           <fieldset>
-            <legend className={labelClass}>
-              KHUNG GIỜ TRẢI NGHIỆM
-            </legend>
+            <legend className={labelClass}>KHUNG GIỜ TRẢI NGHIỆM</legend>
 
             <div className="grid grid-cols-3 gap-2">
-              {(["09:00 - 11:30", "11:30 - 13:30", "13:30 - 16:00"] as const).map(
-                (item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    aria-pressed={time === item}
-                    aria-invalid={Boolean(errors.experienceTime)}
-                    onClick={() =>
-                      setValue("experienceTime", item, {
-                        shouldDirty: true,
-                        shouldTouch: true,
-                        shouldValidate: true,
-                      })
-                    }
-                    className={`
+              {(
+                ["09:00 - 11:30", "11:30 - 13:30", "13:30 - 16:00"] as const
+              ).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  aria-pressed={time === item}
+                  aria-invalid={Boolean(errors.experienceTime)}
+                  onClick={() =>
+                    setValue("experienceTime", item, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    })
+                  }
+                  className={`
                       whitespace-nowrap rounded-xl border
                       px-1 py-3 text-[0.6875rem] transition
                       ${
@@ -320,11 +324,10 @@ export function StepAuth({ onNext }: StepAuthProps) {
                           : "border-[#B98A66] bg-[#111B36]/70 text-white hover:bg-white/10"
                       }
                     `}
-                  >
-                    {item}
-                  </button>
-                ),
-              )}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
             {errors.experienceTime && (
               <p role="alert" className="mt-1 text-left text-xs text-[#E9A6A6]">
